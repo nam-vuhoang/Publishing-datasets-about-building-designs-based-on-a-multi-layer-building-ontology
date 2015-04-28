@@ -100,18 +100,6 @@ expr:STRING22 owl:equivalentClass
 
 
 
-% \begin{lstlisting}[caption={Simple data\-types as instances of \name{owl:Class}}, label=lst:ifcOWL-simple-types]
-% expr:STRING a owl:Class;
-%     rdfs:subClassOf [ a owl:Restriction;
-%                       owl:onProperty rdf:value;
-%                       owl:allValuesFrom xsd:double; ] .
-% ifc:IfcTimeStamp a owl:Class;
-%     rdfs:subClassOf [ a owl:Restriction;
-%                       owl:onProperty rdf:value;
-%                       owl:allValuesFrom xsd:dateTime; ]
-% \end{lstlisting}
-
-
 % The reason of using class boxing technique is to make simple data\-types be instances of \name{owl:Class}. Instead of that they could be either simply replaced with primitive XSD data\-types, or defined as shown in the Listing , but in these cases they will be instances of \name{rdfs:Datatype}.  and cannot be used for union classes 
 
 
@@ -155,17 +143,66 @@ expr:STRING22 owl:equivalentClass
 %     rdfs:subClassOf expr:STRING.
 % \end{lstlisting}
 
+\subsection{Select Datatype Declarations}
+\label{subsec:ifcOWL-select-types}
+
+A select data\-type represents an union of some defined, entity data\-types. For instance, data\-type \name{Ifc\-Trim\-ming\-Se\-lect} is an union of entity data\-type \name{Ifc\-Car\-te\-sian\-Point} and defined data\-type \name{Ifc\-Pa\-ra\-me\-ter\-Va\-lue}.
+
+\begin{ontologyRule}[caption={Defined data\-types}]
+A select data\-type is converted to an \name{owl:Class} that is equivalent to a union of \name{owl:Class} statements (see example on Listing \ref{lst:ifcOWL-select-types}).
+\end{ontologyRule}
+
+\begin{lstlisting}[caption={Select data\-types, label=lst:ifcOWL-select-types]
+ifc:IfcTrimmingSelect owl:equivalentClass [
+   rdf:type     owl:Class ;
+   owl:unionOf  ( ifc:IfcCartesianPoint ifc:IfcparameterValue ) ] .
+\end{lstlisting}
+
+\TODO{Explain what if another OWL profile is used, and it doesn't support owl:unionOf --> use rdfs:subClassOf}
+
 \subsection{Defined Datatype Declarations}
 \label{subsec:ifcOWL-defined-types}
+
+A defined (declared, named) data\-type is usually specified as equivalent to a simple data\-type or another defined data\-type, with or without a constraint. For instance, type \name{Ifc\-Length\-Mea\-sure} is equal to \name{REAL}, and type \name{Ifc\-Po\-si\-ti\-ve\-Length\-Mea\-su\-re} is a set of positive \name{Ifc\-Length\-Mea\-sure} values.
+
+In contrast to simple data\-types, defined data\-types can be used for declaration of select data\-types (see above), and most of defined data\-types have meaningful names. \TODO{When an entity property has select type which is a defined type...}
+%Moreover, only a few of entity type properties in IFC are specified with simple data type.
+
+\begin{ontologyRule}[caption={Defined data\-types}]
+A defined data\-type is converted to an \name{owl:Class} with a single property \name{rdf:value} that has the underlying data\-type of the defined data\-type (see example on Listing \ref{lst:ifcOWL-defined-types}).
+\end{ontologyRule}
+
+\begin{lstlisting}[caption={Defined data\-types}, label=lst:ifcOWL-defined-types]
+ifc:IfcAreaMeasure a owl:Class;
+    rdfs:subClassOf [ a owl:Restriction;
+                      owl:onProperty rdf:value;
+                      owl:allValuesFrom xsd:double; ] .
+\end{lstlisting}
+
+Defined data\-types must be declared as wrapper classes because they must be instances of \name{owl:Class} can be used as a class-option of an union class (see \ref{subsec:ifcOWL-select-types}).
+
 
 % \item \textbf{Defined or declared data type}: This further specializes other data\-types — e.g., define a datatype \emph{PositiveInteger} that is of type integer with a positive value.
 
 
 
+
+
 \subsection{Entity Datatype Declarations}
+\label{subsec:ifcOWL-entity-types}
+
+Each entity data\-type represents a category of entity instances (entities). The main relationships between entities are inheritance and association (aggregation is considered as a special case of association).
+
+similar to object model, single inheritance with properties.
+
+
+
+
+
+
 
 \subsection{Enumeration Type Declarations}
-\label{ifcOWL:enum-types}
+\label{subsec:ifcOWL-enum-types}
 
 
 
