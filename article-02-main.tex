@@ -1,0 +1,146 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Converting EXPRESS Schemas to OWL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Generating ifcOWL Ontologies From IFC Specifications}
+
+\subsection{Common Conversion Rules}
+
+\TODO{Explain: why an OWL 2 profile has to be being chosen, how that choice will impact to the reasoning and querying performance, whether we can use other OWL 2 EL or QL for ifcOWL-Lite ontology}
+
+\begin{ontologyRule}[OWL profile, ifcOWL layers: all]
+All ifc\-OWL ontologies must be based on OWL 2 RL profile\footnote{Our IFC-EXPRESS-to-OWL converter tool which is available on http://drumbeat.cs.hut.fi also allows choosing other OWL profiles: OWL Lite, OWL DL, OWL Full, OWL 2 EL, OWL 2 QL, OWL 2 Full}.
+\end{ontologyRule}
+
+This profile has been chosen because in contrast to OWL 2 EL and OWL 2 QL, it supports such needed things as: enumerations of individuals (see \ref{ifcOWL:enum-types}), named individuals (see \ref{ifcRDF:naming-individuals}), etc.\cite{w3c:owl2-profiles}.
+
+\begin{ontologyRule}[Domain and range information, ifcOWL layers: all]
+Property domain and range constraints specified by \name{rdfs:domain} and \name{rdfs:range} should not be included in ifcOWL ontologies.
+\end{ontologyRule}
+
+Properties \name{rdfs:\-domain} and \name{rdfs:\-range} are mainly used to infer types, but not to check type constraints like in programming languages \cite{w3c:owl-guide}. Moreover, the basic facilities given by them do not provide any direct way to indicate property restrictions that are local to a class \cite{w3c:rdf-schema}. Although it is possible to combine use \name{rdfs:domain} and \name{rdfs:range} with sub-property hierarchies, direct support for such declarations is provided by OWL constructs, e.g. \name{owl:\-onProperty}. 
+
+\begin{ontologyRule}[Namespaces, ifcOWL layers: all]
+All constructs related purely to EXPRESS, STEP or IFC specifications must be belong to namespaces with prefixes \name{expr:}, \name{step:} and \name{ifc:} accordingly. At this moment the namespaces are defined as in Listing \ref{ifcOWL-namespaces}. Instead of \name{IFCXXX} there should be IFC versions, e.g. \name{IFC2x3} or \name{IFC4}.
+\end{ontologyRule}
+
+\begin{lstlisting}[caption={Namespace definitions},label=ifcOWL-namespaces]
+@prefix expr: <http://drumbeat.cs.hut.fi/owl/EXPRESS#>
+@prefix step: <http://drumbeat.cs.hut.fi/owl/STEP#>
+@prefix ifc: <http://drumbeat.cs.hut.fi/owl/IFCXXX#>
+\end{lstlisting}
+
+\subsection{Components of an EXPRESS schema}
+The IFC specification is written as an EXPRESS schema. An EXPRESS schema defines series of data types, functions and rules by using EXPRESS data definition language specified in ISO10303-11 \cite{wiki:express,noauthor:ifc-guide}.
+
+There are six groups of data types: simple data types, entity data types, enumeration data types, defined (declared) data types, select data types and aggregation data types. All types must be declared obviously by using constructs TYPE and ENTITY except the built-in simple data types. Definitions and characteristics of data types are considered below. EXPRESS schemata also contain definitions of functions, rules and type constraints most of which cannot be reflected in OWL 2 at all.
+
+\subsection{Simple Data Type Declarations}
+\label{ifcOWL:simple-type}
+
+Simple data types built in EXPRESS are: \name{STRING}, \name{BI\-NA\-RY}, \name{IN\-TE\-GER}, \name{REAL}, \name{NUM\-BER}, \name{BOO\-LEAN} and \name{LO\-GI\-CAL}. However, type \name{LOGICAL} which has three possible values \name{TRUE}, \name{FALSE} and \name{UNKNOWN} is considered by us as an enumeration data type (see \ref{ifcOWL:enum-types}). The same to type \name{BOOLEAN} which is like a primitive boolean data type but semantically close and met with the same frequency in IFC4 as \name{LOGICAL}.
+
+On the other hand, there are two defined data types in IFC (not in EXPRESS) that also can be referred to the simple-data-type group: \name{Ifc\-Time\-Stamp} which is a so-called TimeSpan data type and can be easily converted to \name{xsd:date\-Time}, and \name{Ifc\-Globally\-Unique\-Id} which represents set of compressed Globally Unique Identifiers (GUIDs), i.e. strings with fixed length (see Listing \ref{ifcOWL-additional-simple-types}). 
+
+\begin{lstlisting}[caption={Two defined data types considered as simple data types},label=ifcOWL-additional-simple-types]
+(* number of seconds elapsed since the beginning of the year 1970 *)
+TYPE IfcTimeStamp = INTEGER; END_TYPE;
+
+(* compressed GUID *)
+TYPE IfcGloballyUniqueId = STRING(22) FIXED; END_TYPE;
+\end{lstlisting}
+
+\begin{ontologyRule}[Simple data types, ifcOWL layers: all]
+All simple data types except \emph{BOOLEAN} and \emph{LOGICAL} are converted to OWL classes which have only one property \name{rdf:value}. The range of that property should be the most similar primitive XSD type supported by OWL 2 \cite{w3c:owl2-profiles} and recommended to use in Linked Data Platform Best Practices and Guideline \cite{w3c:ldp-best-practices}. For \name{STRING} and \name{Ifc\-Globally\-UniqueId} it is \name{xsd:\-string}, for \name{BINARY} -- \name{xsd:\-hexBinary}, for \name{INTEGER} -- \name{xsd:\-integer}, for \name{REAL} and \name{NUMBER} -- \name{xsd:\-double}, for \name{Ifc\-Time\-Stamp} -- \name{xsd:\-dateTime} (see example on Listing \ref{lst:ifcOWL-simple-types}).
+\end{ontologyRule}
+
+\begin{lstlisting}[caption={Simple data types as instances of \name{owl:Class}}, label=lst:ifcOWL-simple-types]
+expr:STRING a owl:Class;
+    rdfs:subClassOf [ a owl:Restriction;
+                      owl:onProperty rdf:value;
+                      owl:allValuesFrom xsd:double; ] .
+ifc:IfcTimeStamp a owl:Class;
+    rdfs:subClassOf [ a owl:Restriction;
+                      owl:onProperty rdf:value;
+                      owl:allValuesFrom xsd:dateTime; ]
+\end{lstlisting}
+
+The selected XSD types conform to the value spaces of the original EXPRESS and IFC data types better than other ones. For instance, type \name{xsd:double} is better than \name{xsd:decimal} as it is an IEEE 64-bit floating-point data type and supports scientific notation \cite{w3c:xsd,datapic:xsd}.
+
+The reason of using class boxing technique is to make simple data types be instances of \name{owl:Class}. Instead of that they could be either simply replaced with primitive XSD data types, or defined as shown in the Listing , but in these cases they will be instances of \name{rdfs:Datatype}.  and cannot be used for union classes 
+
+
+\begin{lstlisting}[caption={Simple data types as instances of \name{rdfs:Datattype}},label=lst:ifcOWL-simple-types-2]
+# if LEVEL_OF_DETAIL is higher than STANDARD
+expr:STRING owl:equivalentClass [
+    rdf:type        rdfs:Datatype ;
+    owl:onDatatype  xsd:string ;
+    owl:withRestrictions ()
+]
+\end{lstlisting}
+
+
+Other considered conversion options were:
+\begin{itemize}
+\item To replace simple data types with the primitive XSD data types. But in this case all select data types (see \ref{subsec:ifcOWL:select-types}) cannot be defined by means of property \name{owl:unionOf} the range of which 
+
+all properties in any OWL profile except OWL Full must be either \name{owl:}
+\end{itemize}
+
+
+Some of simple data types may be specified together with optional size parameter, e.g. \name{STRING(lengthInBytes)} or \name{BINARY(sizeInBits)}. If \name{\$LEVEL\-\_OF\-\_DETAILS} is less than \name{STANDARD} (see \ref{subsec:multilayer-ontology-approach}), these parameters are ignored, i.e. \name{STRING(N)} is considered as equivalent to \name{STRING}. Otherwise additional constraints are added to the primitive data type by using property \name{owl:onDatatype} and data type facets \name{xsd:maxLength} or \name{xsd:length} \cite{w3c:owl2-syntax,w3c:xmlschema11-2} (see Listing \ref{ifcOWL:length-constraint}. 
+
+\begin{lstlisting}[caption={Length constraint},label=ifcOWL:length-constraint]
+# if LEVEL_OF_DETAIL is higher than STANDARD
+expr:STRING22 owl:equivalentClass [
+    rdf:type        rdfs:Datatype ;
+    owl:onDatatype  xsd:string ;
+    owl:withRestrictions (
+        [ xsd:length "22"^^xsd:integer ]
+    )
+]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={},label=1]
+expr:STRING rdf:type owl:Class;
+    rdfs:subClassOf [
+        owl:Restriction;
+        owl:onProperty expr:hasValue;
+        owl:allValuesFrom xsd:string;
+    ].
+          
+ifc:ifcLabel rdf:type owl:Class;
+    rdfs:subClassOf expr:STRING.
+\end{lstlisting}
+
+\begin{lstlisting}[caption={},label=1]
+
+% http://answers.semanticweb.com/questions/229/how-to-define-a-own-notation-datatype
+
+http://semantic-web-grundlagen.de/wiki/Guide_to_OWL_2_for_OWL_1_users#Datatypes
+
+http://www2.informatik.hu-berlin.de/~wandelt/SW201213/9OWL2.pdf
+
+Using that in OWL 2 DL is no problem. If you want to stay within one of the profiles though note that defining datatypes through such restrictions isn't allowed in any of them. So for increased interoperability (also with OWL 1 and RDFS) you could just use xsd:string instead. That should be perfectly fine with SKOS.
+
+
+expr:STRING rdf:type rdfs:Datatype;
+ owl:onDatatype xsd:string;
+ owl:withRestrictions ().
+ 
+ifc:ifcLabel rdf:type owl:Class;
+    rdfs:subClassOf expr:STRING.
+\end{lstlisting}
+
+\subsection{Entity Data Type Declarations}
+
+\subsection{Enumeration Type Declarations}
+\label{ifcOWL:enum-types}
+
+
+
+\section{Generating ifcRDF Datasets From IFC Data}
+
+
+\subsection{Naming individuals}
+\label{ifcRDF:naming-individuals}

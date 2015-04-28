@@ -1,0 +1,117 @@
+\documentclass[envcountsame]{llncs}
+
+\usepackage{makeidx}    % allows indexgeneration
+\usepackage{graphicx}   % allows \includegraphics
+\usepackage{cite}       % enables autonumbering in cites
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Additional libraries
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{color}
+
+%
+% LISTINGS
+%
+
+\usepackage{listings} % see manual: ftp://ftp.funet.fi/pub/TeX/CTAN/macros/latex/contrib/listings/listings.pdf
+
+\lstset{language=TeX,
+backgroundcolor=\color[gray]{0.9},
+numberstyle=\scriptsize,
+basicstyle=\ttfamily\scriptsize,
+numbers=none,
+stepnumber=1,
+frame=none,
+breaklines=true,
+breakautoindent=true}
+
+\AtBeginDocument{%
+  \renewcommand{\thelstlisting}{\arabic{lstlisting}}
+}
+
+\spnewtheorem{ontologyRule}{Ontology Rule}{\bfseries}{\rmfamily}
+
+\spnewtheorem{datasetsRule}{Datasets Rule}{\bfseries}{\rmfamily}
+
+
+%
+% TABLES
+%
+
+\usepackage{tabularx} % see manual: http://en.wikibooks.org/wiki/LaTeX/Tables#The_tabularx_package
+
+%\usepackage{multirow}
+
+%\usepackage{svg}        % allows adding scalable vector graphic files
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% User-defined commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \newcommand{\definition}[1]{\textbf{#1}}
+%\newcommand{\name}[1]{\emph{#1}}
+\newcommand{\name}[1]{\textsf{\footnotesize{}#1}}
+\newcommand{\TODO}[1]{\textbf{TODO: }\textit{#1}}
+\newcommand{\REVIEW}[1]{\textit{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+%
+\frontmatter          % for the preliminaries
+%
+\pagestyle{headings}  % switches on printing of running heads
+\addtocmark{IFC-EXPRESS-to-OWL-2} % additional mark in the TOC
+%
+
+
+%\vspace{1cm}
+%
+\title{Publishing Datasets about Building Designs \\Based on a Multilayer Building Ontology}
+%
+\titlerunning{Building ontology}  % abbreviated title (for running head)
+%                                     also used for the TOC unless
+%                                     \toctitle is used
+%
+\author{Nam Vu Hoang \and Seppo T\"orm\"a}
+%
+%\authorrunning{} % abbreviated author list (for running head)
+%
+\institute{Department of Computer Science, \\
+Aalto University School of Science, 
+Espoo, Finland\\
+\email{\{nam.vuhoang,seppo.torma\}@aalto.fi}}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+
+The volume of data produced in the construction industry is growing all the time. However, building data is currently much less accessible than other smart city data related to geography, traffic, or services. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets  by using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. Moreover, it paves the way to a completely distributed and loosely coupled architecture for building information management. Finally, opening selected parts of construction data to a wider set of stakeholders creates opportunities for new and innovative applications in the smart cities of the future.
+
+\keywords{IFC, BIM, Ontology, Linked Data, OWL, RDF}
+
+\end{abstract}
+
+
+\input{article-01-introduction.tex}
+
+\input{article-02-main.tex}
+
+
+\input{article-03-bibliography.tex}
+
+\clearpage
+\addtocmark[2]{Author Index} % additional numbered TOC entry
+\renewcommand{\indexname}{Author Index}
+\printindex
+\clearpage
+\addtocmark[2]{Subject Index} % additional numbered TOC entry
+\markboth{Subject Index}{Subject Index}
+\renewcommand{\indexname}{Subject Index}
+% \input{subjidx.ind}
+\end{document}
