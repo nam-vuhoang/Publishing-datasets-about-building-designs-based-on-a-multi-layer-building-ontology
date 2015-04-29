@@ -35,9 +35,9 @@ breakautoindent=true}
   \renewcommand{\thelstlisting}{\arabic{lstlisting}}
 }
 
-\spnewtheorem{ontologyRule}{Ontology Rule}{\bfseries}{\rmfamily}
+\spnewtheorem{principle}{Principle}{\bfseries}{\rmfamily}
 
-\spnewtheorem{datasetsRule}{Datasets Rule}{\bfseries}{\rmfamily}
+%\spnewtheorem{datasetsRule}{Datasets Rule}{\bfseries}{\rmfamily}
 
 
 %
@@ -76,13 +76,14 @@ breakautoindent=true}
 %\newcommand{\REVIEW}[1]{\textit{#1}}
 
 % ifcOWL layer names
-\newcommand{\lite}{\textbf{Lite}}
+\newcommand{\simple}{\textbf{Simple}}
 \newcommand{\standard}{\textbf{Standard}}
-\newcommand{\advanced}{\textbf{Advanced}}
+\newcommand{\extended}{\textbf{Extended}}
 
-\newcommand{\ifclite}{\textbf{ifcOWL-Lite}}
-\newcommand{\ifcstandard}{\textbf{ifcOWL-Standard}}
-\newcommand{\ifcadvanced}{\textbf{ifcOWL-Advanced}}
+\newcommand{\ifcowl}{\textbf{ifcOWL}}
+\newcommand{\ifcsimple}{\ifcowl{}-\simple{}}
+\newcommand{\ifcstandard}{\ifcowl{}-\standard{}}
+\newcommand{\ifcextended}{\ifcowl{}-\extended{}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DOCUMENT
@@ -100,7 +101,7 @@ breakautoindent=true}
 
 %\vspace{1cm}
 %
-\title{Publishing Datasets about Building Designs \\Based on a Multilayer Building Ontology}
+\title{Generating Datasets about Building Designs \\Based on a Multilayer Building Ontology}
 %
 \titlerunning{Building ontology}  % abbreviated title (for running head)
 %                                     also used for the TOC unless
@@ -119,9 +120,9 @@ Espoo, Finland\\
 
 \begin{abstract}
 
-The volume of data produced in the construction industry is growing all the time. However, building data is currently difficult to access in an open manner. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets  by using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. Moreover, it paves the way to a completely distributed and loosely coupled architecture for building information management. Finally, opening selected parts of construction data to a wider set of stakeholders creates opportunities for new and innovative applications in the smart cities of the future.
+The volume of data produced in the construction industry is rapidly growing but, as of now, it is not available for open and flexible access and utilization. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets  by using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. It paves the way to a distributed and loosely coupled architecture for building information management. Opening selected parts of construction data to a wider set of stakeholders creates opportunities for innovative applications in the smart cities of the future.
 
-\keywords{IFC, BIM, Ontology, Linked Data, OWL, RDF}
+\keywords{Ontology, Linked Data, OWL, RDF, IFC, BIM}
 
 \end{abstract}
 
