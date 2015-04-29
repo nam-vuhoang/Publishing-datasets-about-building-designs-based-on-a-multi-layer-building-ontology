@@ -2,20 +2,19 @@
 % Converting EXPRESS Schemas to OWL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Generating ifcOWL Ontologies From IFC Specifications}
+\section{Principles of Generating ifcOWL Ontologies And ifcRDF Datasets}
 \label{sec:ifcOWL}
 This section describes the derivation of the ifcOWL ontologies from the IFC specification. Since there are different options for the conversion, the choices are presented as conversion principles with justiciations. 
 
 \subsection{Common Conversion Principles}
 
-\begin{principle}[Simple OWL profiles]
-\ifcowl{} should be compatible with as simple OWL 2 profiles as possible (to support a maximum variety of reasoners and other tools). 
+\begin{principle}%[Simple OWL profiles]
+\ifcsimple{} should be compatible with as simple OWL 2 profiles as possible (to support a maximum variety of reasoners and other tools). 
 \end{principle}
 
-The first layer \ifcsimple{} can be specified to be compatible with any OWL 2 DL profile: OWL 2 EL, OWL 2 QL or OWL 2 RL. The other layers \ifcstandard{} and \ifcextended{} are compatible with OWL 2 RL\footnote{Our WebIFC converter tool allows forced choice of other OWL profiles for any layer: OWL Lite, OWL DL, OWL Full, and OWL 2 Full}. OWL 2 RL needed because it -- unlike OWL 2 EL or QL -- supports 
-union data\-types (see \ref{subsec:ifcOWL-select-types}), enumerations of individuals (see \ref{subsec:ifcOWL-enum-types}), and anonymous individuals (see \ref{subsec:ifcRDF-naming-individuals}) required by the IFC schema. \cite{w3c:owl2-profiles}
+The first layer \ifcsimple{} can be specified to be compatible with any OWL 2 DL profile: OWL 2 EL, OWL 2 QL or OWL 2 RL. The other layers \ifcstandard{} and \ifcextended{} are compatible with OWL 2 RL. OWL 2 RL needed because it -- unlike OWL 2 EL or QL -- supports such necessary things like enumerations of individuals, union classes, disjoint classes, and also anonymous individuals. \cite{w3c:owl2-profiles}
 
-\begin{principle}[No domain and range restrictions]
+\begin{principle}%[No domain and range restrictions]
 Property names should be kept simple and therefore domain and range constraints (specified by \name{rdfs:domain} and \name{rdfs:range}) should not be included in \ifcowl{} ontologies.
 \end{principle}
 
@@ -29,8 +28,8 @@ provide any direct way to indicate property restrictions that are local to a cla
 Although it is possible to combine use \name{rdfs:domain} and \name{rdfs:range} with sub-property hierarchies, 
 direct support for such declarations is provided by OWL constructs, e.g. \name{owl:\-onProperty}.
 
-\begin{principle}[Namespaces]
-All constructs related to EXPRESS, STEP or IFC specifications must be belong to namespaces shown below with prefixes \name{expr:}, \name{step:} and \name{ifc:} accordingly (instead of \name{IFCXXX} there should be the name of IFC version, e.g. \name{IFC4_ADD1}):
+\begin{principle}%[Namespaces]
+All constructs related to EXPRESS, STEP or IFC specifications must be belong to namespaces shown below with prefixes \name{expr:}, \name{step:} and \name{ifc:} accordingly (instead of \name{IFCXXX} there should be the name of IFC version, e.g. \name{IFC4\_ADD1}):
 %\name{IFC2x3} or \name{IFC4}):
 %At this moment the namespaces are defined as below (instead of \name{IFCXXX} there should be IFC versions, e.g. 
 %\name{IFC2x3} or \name{IFC4}):
@@ -43,27 +42,32 @@ All constructs related to EXPRESS, STEP or IFC specifications must be belong to 
 \end{lstlisting}
 \end{principle}
 
+\begin{principle}All definitions of functions, rules, type constraints and derived attributes specified in EXPRESS after keywords \name{FUNCTION}, \name{RULE}, \name{WHERE} and \name{RULE} accordingly should be ignored.
+\end{principle}
+
+\TODO{Explain why functions, rules, etc. should be ignored}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Components of an EXPRESS schema
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Components of an EXPRESS schema}
-The IFC specification is written as an EXPRESS schema. An EXPRESS schema defines series of data\-types, functions and rules by using EXPRESS data definition language specified in ISO10303-11 \cite{wiki:express,noauthor:ifc-guide}.
+\subsection{Datatype Declarations}
+\label{subsec:ifcOWL-types}
 
-There are six groups of data\-types: simple data\-types, entity data\-types, enumeration data\-types, defined (declared) data\-types, select data\-types and aggregation data\-types. All types must be declared obviously by using constructs TYPE and ENTITY except the built-in simple data\-types. Definitions and characteristics of data\-types are considered below. EXPRESS schemata also contain definitions of functions, rules and type constraints most of which cannot be reflected in OWL 2 at all.
+\TODO{\textit{Write about EXPRESS in the Introduction section}:\\
+The IFC specification is written as an EXPRESS schema. An EXPRESS schema defines series of data\-types, functions and rules by using EXPRESS data definition language specified in ISO10303-11 \cite{wiki:express,noauthor:ifc-guide}.}
+
+An EXPRESS schema includes six groups of data\-types: built-in simple data\-types, entity data\-types, enumeration data\-types, defined data\-types, select data\-types and aggregation data\-types.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simple Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Simple Datatype Declarations}
-\label{subsec:ifcOWL-simple-type}
+\subsubsection{Simple Datatypes} built in EXPRESS are: \name{STRING}, \name{BI\-NA\-RY}, \name{IN\-TE\-GER}, \name{REAL}, \name{NUM\-BER}, \name{BOO\-LEAN} and \name{LO\-GI\-CAL}. Types \name{STRING} and \name{BINARY} data\-types may be specified with a size parameter: \name{STRING (max\-Length\-In\-Bytes)} or \name{BINARY(size\-In\-Bits)}.
 
-Simple data\-types built in EXPRESS are: \name{STRING}, \name{BI\-NA\-RY}, \name{IN\-TE\-GER}, \name{REAL}, \name{NUM\-BER}, \name{BOO\-LEAN} and \name{LO\-GI\-CAL}. However, type \name{LOGICAL} which has three possible values \name{TRUE}, \name{FALSE} and \name{UNKNOWN} is considered by us as an enumeration data\-type (see \ref{subsec:ifcOWL-enum-types}). The same to type \name{BOOLEAN} which is like a primitive boolean data\-type but semantically close and met with the same frequency in IFC4 as \name{LOGICAL}.
-
-\begin{principle}[Simple data\-types]
-All simple data\-types except \emph{BOOLEAN} and \emph{LOGICAL} are declared as the same as their most similar primitive XSD data\-types which are supported by OWL 2 \cite{w3c:owl2-profiles} and are among preferred standard data\-types in Linked Data Platform \cite{w3c:ldp-best-practices}:
+\begin{principle}%[Simple data\-types]
+A simple data\-type (except \emph{BOOLEAN} and \emph{LOGICAL}) should be declared in \ifcowl{} as \name{owl:sameAs} of its most similar primitive XSD data\-type among all data\-types supported by any OWL 2 profile \cite{w3c:owl2-profiles} and preferred in Linked Data Platform \cite{w3c:ldp-best-practices}:
 
 % \begin{lstlisting}[caption={Simple data types}, label=lst:ifcOWL-simple-types]
 \begin{lstlisting}
@@ -74,20 +78,22 @@ expr:REAL, expr:NUMBER owl:sameAs xsd:double .
 \end{lstlisting}
 \end{principle}
 
-`Most similar XSD data\-types' mean the types from XSD schema that conform to the value spaces of the original EXPRESS and IFC data\-types better than other ones. For instance, type \name{xsd:double} is more similar to \name{REAL} than \name{xsd:decimal} as it is an IEEE 64-bit floating-point data\-type and supports scientific notation \cite{w3c:xsd,datapic:xsd}. It is recommended to use XSD data\-type names directly when they are needed.
+Type \name{LOGICAL} -- with its three possible values \name{TRUE}, \name{FALSE} and \name{UNKNOWN} -- is considered as an enumeration data\-type. The same to \name{BOOLEAN} because OWL 2 EL and QL do not support type \name{xsd:boolean} \cite{w3c:owl2-profiles}.
 
-\begin{principle}[Simple data\-types with sizes, ifcOWL layers: all]If \name{STRING} and \name{BINARY} data\-types are specified with a size parameter, i.e. \name{STRING (max\-Length\-In\-Bytes)} or \name{BINARY(size\-In\-Bits)}, then in layers \simple{} and \standard{} they are defined as equivalent to data\-types without size. But in layer \extended{}, the size parameter must be declared by using property \name{owl:onDatatype} and data\-type facets \name{xsd:maxLength} or \name{xsd:length} \cite{w3c:owl2-syntax,w3c:xmlschema11-2}, for instance:
+Statement `most similar XSD data\-type' means the type from XSD schema that conform to the value spaces of the EXPRESS simple data\-type better than any other type. For instance, type \name{xsd:double} is more similar to \name{REAL} than \name{xsd:decimal} as it is an IEEE 64-bit floating-point data\-type and supports scientific notation \cite{w3c:xsd,datapic:xsd}. When it is needed to refer to an EXPRRESS simple data\-type, we recommend to use its XSD equivalent type directly.
+
+\begin{principle}%[Simple data\-types with sizes]
+Size parameters of types \name{STRING} and \name{BINARY} (if any) should be ignored in layers \simple{} and \standard{} and should be declared obviously -- by means of OWL 2 data\-type facets -- in layer \extended{}, for instance:
+
+% they are defined as equivalent to data\-types without size. But in layer \extended{}, the size parameter must be declared by using property \name{owl:onDatatype} and data\-type facets \name{xsd:maxLength} or \name{xsd:length} \cite{w3c:owl2-syntax,w3c:xmlschema11-2}, for instance:
 
 % \begin{lstlisting}[caption={Size constraint of simple datatypes},label=lst:ifcOWL-simple-types-with-size]
 \begin{lstlisting}
 # only for Simple, Standard layers
-expr:STRING22 owl:sameAs expr:STRING .
-
+  expr:STRING22 owl:sameAs xsd:string .
 # only for Extended layer
-expr:STRING22 owl:equivalentClass
-    [   a rdfs:Datatype ;
-        owl:onDatatype  xsd:string ;
-        owl:withRestrictions ( [ xsd:length "22"^^xsd:integer ] ) ] .
+  expr:STRING22 owl:equivalentClass [   a rdfs:Datatype ;
+    owl:onDatatype  xsd:string; owl:withRestrictions ( [ xsd:length 22 ] ) ].
 \end{lstlisting}
 \end{principle}
 
@@ -95,101 +101,88 @@ expr:STRING22 owl:equivalentClass
 % Enumeration Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Enumeration Datatype Declarations}
-\label{subsec:ifcOWL-enum-types}
+\subsubsection{Enumeration Datatypes} represent fixed sets of possible values. 
 
-An enumeration data\-type represents a set of possible fixed values. 
+\begin{principle}%[Enumeration data\-types]
+Each enumeration data\-type should be defined in \ifcowl{} as an \name{owl:Class} which is a subclass of \name{expr:\-Enum\-Class}. Enumeration values must be defined as named individuals of the enumeration class but in different ways in different layers as shown below:
 
-\begin{principle}[Enumeration data\-types]
-Each enumeration data\-type in \textbf{ifc\-OWL} is defined as an \name{owl:Class} which is a subclass of \name{expr:\-Enum\-Class}. All possible values of enumeration data\-types are defined as named individuals. Enumeration data\-type memberships are defined by means of \name{rdf:type} in the \simple{} layer, and by means of \name{owl:oneOf} in \standard{} and \extended{} layers as shown below:
 % \begin{lstlisting}[caption={Enumeration data\-types}, label=lst:ifcOWL-enum-types]
 \begin{lstlisting}
 # only for Simple layer
-ifc:IfcAssemblyPlaceEnum a owl:Class ; rdfs:subclassOf expr:EnumClass .
-ifc:SITE, ifc:FACTORY, ifc:NOTDEFINED rdf:type ifc:IfcAddressTypeEnum .
-    
+  ifc:IfcAssemblyPlaceEnum a owl:Class ; rdfs:subclassOf expr:EnumClass .
+  ifc:SITE, ifc:FACTORY, ifc:NOTDEFINED rdf:type ifc:IfcAddressTypeEnum .
 # only for Standard, Extended layers
-ifc:IfcAssemblyPlaceEnum a owl:Class ;  rdfs:subclassOf expr:EnumClass ;
+  ifc:IfcAssemblyPlaceEnum a owl:Class ;  rdfs:subclassOf expr:EnumClass ;
     owl:oneOf ( ifc:SITE ifc:FACTORY ifc:NOTDEFINED ) .
 \end{lstlisting}
 \end{principle}
 
-The reason of two different approaches is that enumeration with more than one individual or literal are not supported in OWL 2 EL or QL. In both cases enumeration values are defined as individuals of one class so in terms of reasnoning logic they are equivalent. The enumeration values are defined as individuals because OWL 2 RL supports \name{Object\-One\-Of} to define enumeration of individuals, but not \name{Data\-One\-Of} \cite{w3c:owl2-profiles}. The fact that some values such as \name{ifc:NOT\-DE\-FI\-NED} belong to different enumeration data\-types should not cause any problems since all enumeration values in ifc\-RDF datasets are defined together with a concrete enumeration data\-type (see \ref{subsec:ifcRDF-enum-values}). It is also very easy to get all possible values of an enumeration data\-type by using simple SPARQL queries.
+Two different approaches are used because enumerations with more than one individual or literal are not supported in OWL 2 EL or QL, like enumerations of literals in OWL 2 RL. The fact that some values -- for instance, \name{ifc:NOT\-DE\-FI\-NED} -- belong to different enumeration data\-types should not cause any problems since any enumeration value is always specified with an exact type. 
 
-As mentioned above, simple data\-types \name{BOOLEAN} and \name{LOGICAL} are considered by us as enumeration data\-types. But these types and their values must be defined in the EXPRESS namespace, e.g. \name{expr:LOGICAL}, \name{expr:TRUE}, \name{expr:FALSE} or \name{expr:UNKNOWN}.
+As mentioned above, simple data\-types \name{BOOLEAN} and \name{LOGICAL} are considered as enumeration data\-types. But these types and their values must be defined in the EXPRESS-related namespace, e.g. \name{expr:LOGICAL}, \name{expr:TRUE}, \name{expr:UNKNOWN}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Select Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Select Datatype Declarations}
-\label{subsec:ifcOWL-select-types}
+\subsubsection{Select Datatypes} represent unions of other data\-types. Particular members of a select data\-type can be entity, defined or select data\-types. For instance, type \name{Ifc\-Trim\-ming\-Se\-lect} is an union of entity data\-type \name{Ifc\-Car\-te\-sian\-Point} and defined data\-type \name{Ifc\-Pa\-ra\-me\-ter\-Va\-lue}.
 
-A select data\-type represents an union of other data\-types. Union members of a select data\-type usually are either entity data\-types, or defined data\-types all together. But there are a few exceptions, for instance, type \name{Ifc\-Trim\-ming\-Se\-lect} is an union of entity data\-type \name{Ifc\-Car\-te\-sian\-Point} and defined data\-type \name{Ifc\-Pa\-ra\-me\-ter\-Va\-lue}.
-
-\begin{principle}[Select data\-types]
-A select data\-type must be converted to an \name{owl:Class} which is a subclass of \name{expr:\-Select\-Class}. Union-member data\-types are defined by means of \name{rdfs:\-subclassOf} in the \simple{} layer, and by means of \name{owl:unionOf} in \standard{} and \extended{} layers as shown in the listing below.
+\begin{principle}%[Select data\-types]
+A select data\-type must be converted to an \name{owl:Class} which is a subclass of \name{expr:\-Select\-Class}. Its particular data\-types are defined as subclasses of the select class, but in different ways depended on the layer:
 \end{principle}
 
 %\begin{lstlisting}[caption={Select data\-types}, label=lst:ifcOWL-select-types]
 \begin{lstlisting}
 # only for Simple layer
-ifc:IfcTrimmingSelect a owl:Class ; rdfs:subclassOf expr:SelectClass .
-ifc:IfcCartesianPoint, ifc:IfcParameterValue
+  ifc:IfcTrimmingSelect a owl:Class ; rdfs:subclassOf expr:SelectClass .
+  ifc:IfcCartesianPoint, ifc:IfcParameterValue
     rdfs:subclassOf ifc:IfcTrimmingSelect .
-
 # only for Standard, Extended layers
-ifc:IfcTrimmingSelect a owl:Class ; rdfs:subclassOf expr:SelectClass ;
+  ifc:IfcTrimmingSelect a owl:Class ; rdfs:subclassOf expr:SelectClass ;
     owl:unionOf ( ifc:IfcCartesianPoint ifc:IfcParameterValue ) ] .
 \end{lstlisting}
 
-Similarly to the above case, two different approaches are used because property \name{owl:unionOf} supported only in OWL 2 RL, but not in OWL 2 EL and OWL 2 QL \cite{w3c:owl2-profiles}. 
+Two different approaches are used because property \name{owl:unionOf} is supported only in OWL 2 RL, but not in OWL 2 EL and QL \cite{w3c:owl2-profiles}.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Defined Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Defined Datatype Declarations}
-\label{subsec:ifcOWL-defined-types}
+\subsubsection{Defined (Declared, Named) Datatypes} are usually specified as equivalent or subclass of simple data\-types or other defined data\-types. For instance, type \name{Ifc\-Length\-Mea\-sure} is equal to \name{REAL}, while type \name{Ifc\-Po\-si\-ti\-ve\-Length\-Mea\-su\-re} is a subset of \name{Ifc\-Length\-Mea\-sure} with some constraint.
 
-A defined (declared, named) data\-type is usually specified as equivalent to a simple data\-type or another defined data\-type, with or without a additional constraint. For instance, type \name{Ifc\-Length\-Mea\-sure} is defined as equal to \name{REAL}, and type \name{Ifc\-Po\-si\-ti\-ve\-Length\-Mea\-su\-re} is a set of positive \name{Ifc\-Length\-Mea\-sure} values.
-
-\begin{principle}[Defined data\-types]
-If the defined data\-type is based on a simple data\-type then in ifcOWL it is declared as a \name{owl:Class} which is a subclass of \name{expr:\-Defined\-Class} has a single property \name{rdf:value} with that simple data\-type. If the defined data\-type is based on another defined data\-type then it is declared as a subclass of the \name{owl:Class} of that defined data\-type, for instance:
+\begin{principle}%[Defined data\-types]
+A defined data\-type based on a simple data\-type should be declared as an \name{owl:Class} which is a subclass of \name{expr:\-Defined\-Class} and has a single property \name{rdf:value} with that simple data\-type. A defined data\-type based on another defined data\-type should be declared as a subclass of the base defined data\-type, for instance:
 
 %\begin{lstlisting}[caption={Defined data\-types}, label=lst:ifcOWL-defined-types]
-\begin{lstlisting}[aboveskip=3pt]
+\begin{lstlisting}
 ifc:IfcLengthMeasure a owl:Class ; rdfs:subClassOf expr:DefinedClass ;
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty rdf:value;
                       owl:allValuesFrom xsd:double ] .
-                      
-ifc:IfcPositiveLengthMeasure a owl:Class ;
-    rdfs:subClassOf ifc:IfcLengthMeasure .
+ifc:IfcPositiveLengthMeasure rdfs:subClassOf ifc:IfcLengthMeasure .
 \end{lstlisting}
 \end{principle}
 
 
-Defined data\-types are not declared as a \name{rdfs:Datatype}, but \name{owl:Class}es which wrap \name{rdfs:Datatype} values because in contract to simple data types they can be used for declaration of select data\-types (see \ref{subsec:ifcOWL-select-types}).
+Defined data\-types are defined as \name{owl:Class}es instead of \name{rdfs:Datatype}s because they can be merged with other \name{owl:Class}es for creating select data\-types. In addition, different defined data\-types wrapping the same \name{rdfs:Datatype} are not the same. For example, \name{IfcLengthMeasure} is different to \name{IfcMassMeasure} although they both are \name{REAL} and belong to select class \name{IfcMeasureValue}.
 
-Defined data\-type \name{Ifc\-Time\-Stamp} is declared as equivalent to \name{INTEGER} but represents so-called Unix time value that can be easily converted to \name{xsd:date\-Time}. So it wraps a \name{xsd:date\-Time} value instead of \name{xsd:integer}.
+In principle type \name{Ifc\-Time\-Stamp} must wrap an integer value which represents so-called Unix time. But we decided this value should have type \name{xsd:date\-Time}, and all values of \name{Ifc\-Time\-Stamp} must be converted to a standard datetime values.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Entity Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Entity Datatype Declarations}
-\label{subsec:ifcOWL-entity-types}
+\subsubsection{Entity Datatypes} are identical to classes in object-oriented programming languages. Each type may have one super\-type. An attribute is defined with a data\-type, cardinalities and can be marked as optional.
 
-Entity data\-types are identical to classes in object-oriented programming languages. Each type may have not more than one super\-type that it inherits attributes from. An attribute is defined with a data\-type, a minimum and a maximum cardinalities, can be marked as optional.
+\begin{principle}%[Entity data\-types]
+An entity data\-type should be converted to an \name{owl:\-Class} which is subclass of its superclass (if any) or \name{expr:\-Entity\-Class}. Entity attribute cardinalities can be only from 0 to 1, even if this attribute is a set of values. In this case the attribute type is an external aggregated data\-type, for example:
 
-\begin{principle}[Entity data\-types]An entity data\-type is converted to an \name{owl:\-Class} which is subclass of \name{expr:\-Entity\-Class} or its superclass. Entity attributes are defined by means of property \name{owl:on\-Pro\-per\-ty}. If an attribute is optional then its minimum qualified cardinality is 0, otherwise -- 1. Maximum qualified of all attributes are always 1. In case if an attribute is a list or a set of some data\-type then its type is considered as an external aggregated data\-type, for example:
 %\begin{lstlisting}[caption={Entity data\-types}, label=lst:ifcOWL-defined-types]
 \begin{lstlisting}
 ifc:IfcProperty a owl:Class ; rdfs:subClassOf expr:EntityClass .
-
 ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:coordinates;
                       owl:allValuesFrom ifc:LIST_1_3_IfcLengthMeasure ] ;
@@ -207,35 +200,31 @@ ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
 % Aggregated Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Aggregated Type Declarations}
-\label{subsec:ifcOWL-aggregated-types}
+\subsubsection{Aggregated Types} may be unordered (\name{SET} and \name{BAG}) or  ordered (\name{LIST} and \name{ARRAY}) collections. \name{BAG} may contain duplicated values, unlike \name{SET}. \name{ARRAY} is specified with start and end indexes while other types are specified with min and max cardinalities.
 
-Aggregation data\-types may be unordered (\name{SET} and \name{BAG}) or  ordered (\name{LIST} and \name{ARRAY}). \name{BAG} may contain a particular value more than once, unlike \name{SET}. \name{ARRAY} is specified with starting and ending indices while other types are specified with min and max cardinalities.
+\begin{principle}Any aggregated type must be subclass of one of \name{expr:SetClass}, \name{expr:ListClass}, \name{expr:ArrayClass} and \name{expr:BagClass} which are subclasses of \name{expr:\-Collec\-tion\-Class}. The latter has one a nonfunctional property \name{expr:slot} with type \name{expr:Slot} and four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index}. Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}. Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
+\end{principle}
 
-In order to declare these types, new classes were created in a similar way as Ordered List Ontoloty \cite{olo:ontology}:
-\begin{itemize}
-\item Class \name{expr:\-Collec\-tion\-Class} has four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index} and a nonfunctional property \name{expr:slot} with type \name{expr:Slot}.
-\item Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}.
-\item Classes \name{expr:SetClass}, \name{expr:ListClass}, \name{expr:ArrayClass} and \name{expr:BagClass} are subclasses of \name{expr:\-Collec\-tion\-Class}.
-\end{itemize}
+% In order to declare these types, new classes were created in a similar way as Ordered List Ontoloty \cite{olo:ontology}:
+% \begin{itemize}
+% \item Class \name{expr:\-Collec\-tion\-Class} has four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index} and a nonfunctional property \name{expr:slot} with type \name{expr:Slot}.
+% \item Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}.
+% \item Classes \name{expr:SetClass}, \name{expr:ListClass}, \name{expr:ArrayClass} and \name{expr:BagClass} are subclasses of \name{expr:\-Collec\-tion\-Class}.
+% \end{itemize}
 
-Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
+% Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
 
 \begin{lstlisting}
 # all layers:
  ifc:SET_2_UNDEFINED_OF_IfcProfileDef a owl:Class ;
     rdfs:subClassOf ifc:SET_2_UNDEFINED , ifc:SET_OF_IfcProfileDef .
-    
- ifc:SET_2_UNDEFINED, SET_OF_IfcProfileDef a owl:Class ;
-    rdfs:subClassOf expr:SetClass .
+ ifc:SET_2_UNDEFINED, SET_OF_IfcProfileDef rdfs:subClassOf expr:SetClass .
 
 # only for layer Extended:
  ifc:SET_2_UNDEFINED rdfs:subClassOf rdfs:subClassOf [ a owl:Restriction ;
     owl:onProperty expr:slot ; owl:minCardinality "2"^^xsd:integer ] .
-    
  ifc:SET_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ;
     owl:onProperty expr:slot ; owl:allValuesFrom ifc:SLOT_OF_IfcProfileDef ].
-
  ifc:SLOT_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ; owl:onProperty expr:item ; owl:allValuesFrom ifc:IfcProfileDef ] .
 \end{lstlisting}
 
@@ -244,11 +233,11 @@ Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
 % Generating ifcRDF Datasets From IFC Data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Generating ifcRDF Datasets From IFC Data}
+\subsection{Generating ifcRDF Datasets From IFC Data}
 \label{sec:ifcRDF}
 
-\subsection{Dataset Metadata}
-\label{subsec:ifcRDF-metadata}
+\subsubsection{Dataset Metadata}
+%\label{subsec:ifcRDF-metadata}
 
 IFC data are exchanged by using ``STEP physical files'' (SPF). SPF format is defined in ISO 10303-21 \cite{wiki:step-file}. A SPF header section includes a list of STEP-specific metadata entities with types \name{FileDescription} \name{FileName} and \name{FileSchema} described in \cite{buildingSMART:ifc-header}. They are exported as objects of STEP entities, some attributes are duplicated as Dublin Core (DC) metadata annotations, for example:
 
@@ -271,17 +260,16 @@ In a SPF data section each entity is declared with a line number, an entity data
     ifc:globalId    [ a ifc:IfcGloballyUniqueId ; # defined type
                      rdf:value "0P5dbFLWL4cPgmyLNUZJji"^^xsd:string ] ;
     ifc:hasProperties  _:b11 .
-    
 _:b11 a ifc:SET_1_UNLIMITED_OF_IfcProperty ; # entity type
     expr:size "3"^^xsd:integer ;
     expr:itemType ifc:IfcProperty ;
     expr:slot _:b12, _:b13, _:b14 .
-    
 _:b12 a ifc:SLOT_OF_IfcProperty ;
     expr:item [ a ifc:IfcPropertySingleValue ; # entity type
                 ifc:name "initial_GUID"^^xsd:string ;
                 ifc:nominalValue  _:b15 ] .
 \end{lstlisting}
+
 
 %Data\-type of an attribute value is declared obviously only if the attribute has a select data\-type and the value has a defined data\-type. 
 

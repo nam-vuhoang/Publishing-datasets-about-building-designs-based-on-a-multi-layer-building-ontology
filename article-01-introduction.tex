@@ -9,59 +9,54 @@ to surrounding networks (traffic, infrastructure, communication), detected issue
 activities in the building.
 
 Currently, huge amounts of information about building designs is produced  
-using Building Information Modeling (BIM) tools. A widely adopted standard, 
-IFC (Industry Foundation Classes) provides a common representation for BIM models developed in 
+using Building Information Modeling (BIM) tools \cite{eastman2011bim}. A widely adopted standard, 
+IFC (Industry Foundation Classes) \cite{ISO16739,liebich2010unveiling} provides a common representation for BIM models of 
 different design disciplines. All major BIM tools support IFC and can export BIM models to IFC files for exchange with other parties.
 
-BIM models could provide a natural framework to organize and manage information gathered from other 
-sources. However, a big obstacle is the difficulty to access and utilize BIM models. 
-In the realm of IFC the sharing of building models is based on point-to-point file exchange which 
-requires repeated manual work from designers. Information cannot be used in an online, granular, and 
-interlinked manner which provides a poor basis for open utilization of building information and the 
+BIM models could provide a natural framework to organize and manage information about buildings. However, a big obstacle is the difficulty to access and utilize BIM models which have traditionally been shared shared through point-to-point file exchange. They cannot be used in an online, granular, and 
+interlinked manner and provides a poor basis for open utilization of building information and the 
 emergence of new, innovative applications.
-
-To make building designs more openly accessible over the Web, we have developed the 
-\emph{WebIFC converter} to 
+To make BIM models accessible on the Web \cite{torma2014wobd}, we have developed the 
+\name{WebIFC converter} to 
 derive OWL ontologies from the IFC schema (\ifcowl{}), and RDF datasets from IFC files 
-(\ifcrdf{}). The ifcOWL ontology is used to classify concepts, characterize possible relationships, 
-and define constraints in \ifcrdf{} datasets which replicate the content of original IFC data files. 
-All terms defined in the \ifcowl{} ontology must therefore be based on the corresponding constructs in 
-the original IFC schema. The conversion from IFC data files to RDF is straightforward and can be done 
-without information loss.
-
-Ideally, there should also be just one \ifcowl{} ontology for each version of the IFC schema. However,
-there are possibilities and reasons to convert the IFC schema to OWL in several different ways for
-the following reasons. Firstly, there is a \emph{mismatch} between the modeling constructs of OWL and 
-EXPRESS data definition language used to specify the IFC schema, which creates
-different conversion options. Secondly, a simple version of \ifcowl{} \emph{compatible with
-restricted OWL profiles} (OWL 2 EL or QL) is useful to support ontology
-reasoning or inexact reasoning. Thirdly, for most practical purposes only a subset of ontology
-information is ever required, since no validation or checking of \ifcrdf{} data is needed; it can
-be considered \emph{practically valid} with respect to the schema, since IFC files are exported
-from BIM tools with certified converters, and icfRDF can sensibly only be used in a
-\emph{read-only} fashion, since BIM models will be maintained in the native formats of BIM
-tools. Fourthly, a full conversion of the IFC schema will make \ifcowl{}
-\emph{unnecessarily large}, and difficult to understand or manipulate.
+(\ifcrdf{}). The \ifcowl{} specifies concepts, relations, and constraints for \ifcrdf{} datasets that replicate the content of IFC files. 
+All terms defined in \ifcowl{}  must thus be based on the corresponding constructs in 
+the IFC schema. 
 
 \begin{figure}[h]
 \centering
-\includegraphics[angle=0,width=1.0\textwidth]{images/ifcOWL-multilayers.png}
+\includegraphics[angle=0,width=0.9\textwidth]{images/ifcOWL-multilayers.png}
 %\includegraphics{images/ifcOWL-multilayers.jpg}
 \caption{Multiple layers of \ifcowl{} ontology}
 \label{fig:ifcOWL-layers}
 \end{figure}
 
-Consequently, we have converted the IFC schema into a \emph{flexible, multilayer \ifcowl{} ontology}
+The conversion of IFC files to \ifcrdf{} is straightforward and can be done 
+without information loss.
+Ideally, there would also be just one \ifcowl{} ontology for each version of the IFC schema. However,
+there are possibilities and reasons to convert the IFC schema to OWL in several different ways. Firstly, there is a \emph{mismatch} between the modeling constructs of OWL and 
+EXPRESS data definition language used to specify the IFC schema. Secondly, a simple version of \ifcowl{} \emph{compatible with
+restricted OWL profiles} (OWL 2 EL or QL) \cite{motik2009owl} is useful to support ontology
+reasoning or inexact reasoning. Thirdly, for most practical purposes only a subset of ontology
+information is required, as no validation or checking of \ifcrdf{} data is needed; it can
+be considered \emph{practically valid} w.r.t. the schema, since BIM tools use certified converters, and icfRDF can sensibly only be used in a
+\emph{read-only} fashion, since BIM models will be maintained in the native formats of BIM
+tools. Fourthly, a full conversion of the IFC schema will make \ifcowl{}
+\emph{unnecessarily large}, and difficult to understand or manipulate.
+
+Consequently, we convert the IFC schema into a \emph{flexible, multilayer \ifcowl{} ontology}
 in a way that \emph{\ifcrdf{} is compatible with any of the layers} (Fig. \ref{fig:ifcOWL-layers}). 
 New representational constructs are introduced at more comprehensive levels which therefore 
-provide increasing detailed type information about \ifcrdf{} data. Different levels of details of the \ifcowl{} ontology are the following:
+provide increasing detailed type information about \ifcrdf{} data: 
 
+\vspace{2mm}
 % \noindent
+\begin{small}
 \begin{tabular}{|l|l|l|}
-\hline
+ \hline
 \textbf{Layer} & \textbf{Profiles} & \textbf{Included schema information} \\
 \hline
-\hline
+ \hline
 \name{ifcOWL-Simple} & OWL 2 EL & Schema meta data \\
 & OWL 2 QL &  All type definitions and hierarchies \\
 & OWL 2 RL & All entity type properties (names, range types) \\
@@ -72,18 +67,24 @@ provide increasing detailed type information about \ifcrdf{} data. Different lev
 \hline
 \name{ifcOWL-Extended} & OWL 2 RL & All cardinality constraints of properties \\
 & & All cardinality constraints of list types \\
-\hline
+ \hline
 \end{tabular}
+\end{small}
 
-Since all \ifcrdf{} datasets are compatible with all layers of the \ifcowl{} ontology 
-(Fig. \ref{fig:ifcOWL-layers}), a user can choose the best one based on the requirements of 
-the concrete use case and tools. For instance, many Linked Data applications that need to 
-query entity properties, extract the type hierarchy, or convert \ifcrdf{} datasets back to 
-object-oriented data models it is sufficient to use the \name{ifcOWL-Simple} ontology. 
-In case of reasoning about data that includes inverse properties, it is recommended to use 
-\name{ifcOWL-Standard} ontology. If an RDF dataset needs to be modified and data validated 
-using type and cardinality constraints, \name{ifcOWL-Extended} ontology is the correct choice.
+%Since all \ifcrdf{} datasets are compatible with all layers of the \ifcowl{} ontology 
+%(Fig. \ref{fig:ifcOWL-layers}), the most appropriate one can be selected based on the requirements of 
+%a use case and tools. For instance, many Linked Data applications that need to 
+%query entity properties, use the type hierarchy, or convert \ifcrdf{} datasets back to 
+%object-oriented data models it is sufficient to use the \name{ifcOWL-Simple} ontology. 
+%In case of reasoning about data that includes inverse properties, it is recommended to use 
+%\name{ifcOWL-Standard} ontology. If an RDF dataset needs to be modified and data validated 
+%using type and cardinality constraints, \name{ifcOWL-Extended} is the correct choice.
 
+From the previous IFC-to-OWL/RDF conversions
+\cite{beetz2005ontology,beetz2009ifcowl,pauwels2011interoperability} our approach differs since it
+is based on OWL 2 profiles, produces a flexible multilayer ontology, and is specifically targeted to
+real-life Linked Data applications. It uses stable URIs for entities, in contrast to the previous approaches
+where the URIs were instable across models versions.
 
 % \begin{figure}
 % \centering
