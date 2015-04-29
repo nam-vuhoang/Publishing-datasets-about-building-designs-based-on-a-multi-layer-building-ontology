@@ -13,7 +13,7 @@
 
 \TODO{Explain: why an OWL 2 profile has to be being chosen, how that choice will impact to the reasoning and querying performance, whether we can use other OWL 2 EL or QL for ifcOWL-Lite ontology}
 
-OWL 2 RL has been chosen for \ifcstandard{}, \ifcadvanced{} because in contrast to OWL 2 EL and OWL 2 QL, it supports such needed things as: union data\-types (see \ref{subsec:ifcOWL-select-types}), enumerations of individuals (see \ref{subsec:ifcOWL-enum-types}), anonymous individuals (see \ref{subsec:ifcRDF-naming-individuals}), etc.\cite{w3c:owl2-profiles}.
+OWL 2 RL has been chosen for \ifcstandard{}, \ifcadvanced{} because in unlike OWL 2 EL and OWL 2 QL, it supports such needed things as: union data\-types (see \ref{subsec:ifcOWL-select-types}), enumerations of individuals (see \ref{subsec:ifcOWL-enum-types}), anonymous individuals (see \ref{subsec:ifcRDF-naming-individuals}), etc.\cite{w3c:owl2-profiles}.
 
 \begin{ontologyRule}[Domain and range information]
 Property domain and range constraints specified by \name{rdfs:domain} and \name{rdfs:range} should not be included in ifcOWL ontologies.
@@ -181,7 +181,7 @@ ifc:IfcProperty a owl:Class ; rdfs:subClassOf expr:EntityClass .
 
 ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:coordinates;
-                      owl:allValuesFrom LIST_1_3_IfcLengthMeasure ] ;
+                      owl:allValuesFrom ifc:LIST_1_3_IfcLengthMeasure ] ;
     # only for Advanced layer
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:coordinates;
                       owl:cardinality "1"^^xsd:integer ] .
@@ -199,12 +199,56 @@ ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
 \subsection{Aggregated Type Declarations}
 \label{subsec:ifcOWL-aggregated-types}
 
+Aggregation data\-types may be unordered (\name{SET} and \name{BAG}) or  ordered (\name{LIST} and \name{ARRAY}). \name{BAG} may contain a particular value more than once, unlike \name{SET}. \name{ARRAY} is specified with starting and ending indices while other types are specified with min and max cardinalities.
 
+In order to declare these types, new classes were created in a similar way as Ordered List Ontoloty \cite{olo:ontology}:
+\begin{itemize}
+\item Class \name{expr:\-Collec\-tion\-Class} has four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index} and a nonfunctional property \name{expr:slot} with type \name{expr:Slot}.
+\item Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}.
+\item Classes \name{expr:SetClass}, \name{expr:ListClass}, \name{expr:ArrayClass} and \name{expr:BagClass} are subclasses of \name{expr:\-Collec\-tion\-Class}.
+\end{itemize}
 
+Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
+
+\begin{lstlisting}
+# all layers:
+ ifc:SET_2_UNDEFINED_OF_IfcProfileDef a owl:Class ;
+    rdfs:subClassOf ifc:SET_2_UNDEFINED , ifc:SET_OF_IfcProfileDef .
+    
+ ifc:SET_2_UNDEFINED, SET_OF_IfcProfileDef a owl:Class ;
+    rdfs:subClassOf expr:SetClass .
+
+# only for layer Advanced:
+ ifc:SET_2_UNDEFINED rdfs:subClassOf rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty expr:slot ; owl:minCardinality "2"^^xsd:integer ] .
+    
+ ifc:SET_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty expr:slot ; owl:allValuesFrom ifc:SLOT_OF_IfcProfileDef ].
+
+ ifc:SLOT_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ; owl:onProperty expr:item ; owl:allValuesFrom ifc:IfcProfileDef ] .
+\end{lstlisting}
 
 
 \section{Generating ifcRDF Datasets From IFC Data}
 
+\begin{lstlisting}
+:GUID_1916794F-5605-4499-9AB0-F155DE8D3B6C
+    a               ifc:IfcPropertySet ; # entity type
+    ifc:globalId    [ a ifc:IfcGloballyUniqueId ; # defined/select type
+                     rdf:value "0P5dbFLWL4cPgmyLNUZJji"^^xsd:string ] ;
+    ifc:hasProperties  _:b11 .
+    
+_:b11 a ifc:SET_1_UNLIMITED_OF_IfcProperty ; # entity type
+    expr:size "3"^^xsd:integer ;
+    expr:itemType ifc:IfcProperty ;
+    expr:slot _:b12, _:b13, _:b14 .
+    
+_:b12 a ifc:SLOT_OF_IfcProperty ;
+    expr:item [ a ifc:IfcPropertySingleValue ; # entity type
+                ifc:name "initial_GUID"^^xsd:string ;
+                ifc:nominalValue  _:b15 ] .
+\end{lstlisting}
 
-\subsection{Naming individuals}
-\label{ifcRDF:naming-individuals}
+\subsection{Metadata}
+
+\TODO {Recommendations about model namespaces, naming individuals, defined types of select types }
