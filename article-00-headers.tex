@@ -9,6 +9,7 @@
 % Additional libraries
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{color}
+\usepackage{linegoal}
 
 %
 % LISTINGS
@@ -16,7 +17,11 @@
 
 \usepackage{listings} % see manual: ftp://ftp.funet.fi/pub/TeX/CTAN/macros/latex/contrib/listings/listings.pdf
 
-\lstset{language=TeX,
+% language Ruby is used to enable comment lines started with hash character
+
+\lstset{language=Ruby,
+aboveskip=6pt,
+belowskip=6pt,
 backgroundcolor=\color[gray]{0.9},
 numberstyle=\scriptsize,
 basicstyle=\ttfamily\scriptsize,
@@ -45,6 +50,12 @@ breakautoindent=true}
 
 %\usepackage{svg}        % allows adding scalable vector graphic files
 
+%\usepackage{calc}
+
+\graphicspath{{images/}}
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % User-defined commands
@@ -52,19 +63,33 @@ breakautoindent=true}
 
 % \newcommand{\definition}[1]{\textbf{#1}}
 %\newcommand{\name}[1]{\emph{#1}}
-\newcommand{\name}[1]{\textsf{\footnotesize{}#1}}
-\newcommand{\TODO}[1]{\textbf{TODO: }\textit{#1}}
-\newcommand{\REVIEW}[1]{\textit{#1}}
-\newcommand{\lite}{Lite}
-\newcommand{\standard}{Standard}
-\newcommand{\advanced}{Advanced}
 
+% programming language names
+\newcommand{\name}[1]{\textsf{\footnotesize{}#1}}
+
+% highlight texts
+\newcommand{\highlight}[1]{\colorbox{yellow}{\parbox[t]{\linegoal}{#1}}}
+
+% TODO text
+\newcommand{\TODO}[1]{\highlight{\textbf{TODO: }{#1}}}
+
+%\newcommand{\REVIEW}[1]{\textit{#1}}
+
+% ifcOWL layer names
+\newcommand{\lite}{\textbf{Lite}}
+\newcommand{\standard}{\textbf{Standard}}
+\newcommand{\advanced}{\textbf{Advanced}}
+
+\newcommand{\ifclite}{\textbf{ifcOWL-Lite}}
+\newcommand{\ifcstandard}{\textbf{ifcOWL-Standard}}
+\newcommand{\ifcadvanced}{\textbf{ifcOWL-Advanced}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DOCUMENT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
+
 %
 \frontmatter          % for the preliminaries
 %
@@ -94,7 +119,7 @@ Espoo, Finland\\
 
 \begin{abstract}
 
-The volume of data produced in the construction industry is growing all the time. However, building data is currently much less accessible than other smart city data related to geography, traffic, or services. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets  by using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. Moreover, it paves the way to a completely distributed and loosely coupled architecture for building information management. Finally, opening selected parts of construction data to a wider set of stakeholders creates opportunities for new and innovative applications in the smart cities of the future.
+The volume of data produced in the construction industry is growing all the time. However, building data is currently difficult to access in an open manner. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets  by using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. Moreover, it paves the way to a completely distributed and loosely coupled architecture for building information management. Finally, opening selected parts of construction data to a wider set of stakeholders creates opportunities for new and innovative applications in the smart cities of the future.
 
 \keywords{IFC, BIM, Ontology, Linked Data, OWL, RDF}
 

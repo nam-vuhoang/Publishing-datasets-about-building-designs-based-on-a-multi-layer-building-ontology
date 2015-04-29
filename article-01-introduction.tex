@@ -2,94 +2,70 @@
 \label{sec:Introduction}
 
 Construction industry is becoming increasingly data intensive with the growing use of
-information and communication technology in all phases of a building life-cycle. The design phase is
-carried out with Building Information Modeling (BIM) tools and systems that produce elaborate
-object-oriented 3D models, and the construction phase with a wide range of construction planning,
-scheduling, and coordination systems. In the operational stage the building is monitored,
-controlled, and maintained based on sensor data and human observations.
-
-In the future, buildings will act as hubs of a wide variety of real-time and historic data about
+information and communication technology in all phases of a building life-cycle. 
+In the future, buildings will act as hubs of a wide variety of real-time and accumulated data about
 spaces, indoor locations, indoor routes, assets, people, sensors, materials, equipment, connections
-to surrounding networks (traffic, infrastructure, communication), and so on.
+to surrounding networks (traffic, infrastructure, communication), detected issues, and activities in the building.
 
-A huge amount of design information is already created in the building design phase 
-using BIM tools and there is a widely adopted standard, IFC (Industry Foundation Classes) to
-represent building designs. IFC has been specified to improve interoperability between different
-disciplines in the design phase of a project, including the architecture, structural engineering,
-MEP engineering models, and so on. Nowadays, the IFC standard is supported by all the major BIM
+Currently, a huge amount of basic design information about buildings are produced  
+using modern Building Information Modeling (BIM) tools. There is a widely adopted standard, 
+IFC (Industry Foundation Classes) that provides a common representation of building designs developed in different design disciplines: architecture, structural engineering,
+MEP engineering, and so on. Nowadays, the IFC standard is supported by all major BIM
 vendors; their BIM tools can export building models as IFC files that can be exchanged with other
 parties.
 
-The design models can provide the framework with which the information gathered from other sources
-can be organized and visualized.  However, despite the IFC standard, the design information is currently
-difficult to access and utilize. The sharing of building models based on file exchange does not work
-sufficiently well in practice. Utilization of related information from different models requires
-repeated manual work from the designers. In the longer run, file exchange cannot provide a fruitful
-basis for open utilization of building information and emergence of new, innovative applications.
+The BIM models could provide a natural framework to organize and manage information gathered from other sources. However, a big obstacle to that is the difficulty to access and utilize BIM models. 
+In the realm of IFC the sharing of building models is based on point-to-point file exchange which 
+requires repeated manual work from designers. Information cannot be used in an online, granular, and interlinked manner, which provides a poor basis for open utilization of building information and the emergence of new, innovative applications.
 
-We have developed a WebIFC converter to derive an OWL ontology from the IFC schema (called ifcOWL),
-and RDF datasets from IFC files (called ifcRDF).
+To make building information more readily accessible, we have developed a \emph{WebIFC converter} to derive an OWL ontology from the IFC schema (\emph{ifcOWL}), and RDF datasets from IFC files (\emph{ifcRDF}). The ifcOWL ontology is used to classify concepts, characterize possible relationships, and define constraints in ifcRDF datasets which replicate the content of original IFC data files. All terms defined in the ifcOWL ontology must therefore be based on the corresponding constructs in the original IFC schema. The conversion from IFC data files to RDF is straightforward and can be done without information loss.
 
-The ifcOWL ontology is used to classify concepts, characterize possible relationships, and define possible constraints of data in ifcRDF datasets which replicate the content of original IFC-STEP data files. Thus, all terms defined in the ifcOWL ontology must be based on the corresponding constructs of the original IFC-EXPRESS schema. Ideally, there should be only one ifcOWL ontology for one IFC schema (see Fig. \ref{fig:ifcOWL-single}). However, taking account that ifcRDF datasets are automatically generated, data validation is almost never required. So in most of cases it is wisely to use a lightweight ontology instead of a detailed one in order to facilitate more effective reasoning.
+Ideally, there should also be just one ifcOWL ontology for each version of the IFC schema (Fig. \ref{fig:ifcOWL-layers}, a). However, the conversion from the EXPRESS data definition language (that is used to specify the IFC schema) to OWL can be done in several different ways for the following reasons. Firstly, there is a \emph{mismatch} between the modeling constructs between EXPRESS and OWL. Secondly, for most practical purposes, the IFC data can be considered \emph{valid and consistent} with respect to the schema, since the IFC models are exported from BIM tools with certified converters. Thirdly, as the master data of the design models will remain in the native formats of the BIM tools and evolves over time, the icfRDF can in practice only be used in a \emph{read-only} fashion. Fourthly, the conversion of all possible IFC schema information will lead into a \emph{extensive} OWL ontology that mostly contains information not needed in practical applications or use cases.
+
+Consequently, we have converted the IFC schema into a \emph{flexible, multilayer ifcOWL ontology}. Different representational constructs are introduced at different levels. The ifcRDF is compatible with any of the layers; different layers just provide different amounts of type information that can be used with RDF. 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.75\textwidth]{images/ifcOWL-single.png}
-\caption{A single ifcOWL ontology}
-\label{fig:ifcOWL-single}
+\includegraphics{images/ifcOWL-approaches.jpg}
+\caption{Two approaches of creating and using ifcOWL ontology}
+\label{fig:ifcOWL-layers}
 \end{figure}
 
-Various levels of details of ifcOWL ontologies are defined in the Table \ref{tab:ifcOWL-levels}. An ifcOWL ontology version can be considered as extension of all ontology versions with smaller level numbers. 
+Different levels of details of the ifcOWL ontology are the following:
 
-\begin{table}[h]
-\centering
-\footnotesize
-\begin{tabularx}{\textwidth}{|X|X|X|}
-\hline
-\textbf{Level (name)} & \textbf{Detail} & \textbf{Note}   \\
+\begin{enumerate}
+\item
+    \textbf{ifcOWL-Lite} (compatible with OWL 2 EL, OWL 2 QL, OWL 2 RL)
+    \begin{itemize}
+        \item Schema meta data
+        \item All type definitions and hierarchies
+        \item All entity type properties (names and range types)
+    \end{itemize}
+\item
+    \textbf{ifcOWL-Standard} (compatible with OWL 2 RL)
+    \begin{itemize}
+        \item Schema meta data
+        \item All entity type keys
+        \item All entity type inverse properties
+    \end{itemize}
+\item
+    \textbf{ifcOWL-Advanced} (compatible with OWL 2 RL)
+    \begin{itemize}
+        \item All properties' cardinality constraints
+        \item All list types' cardinality constraints
+    \end{itemize}
+\end{enumerate}
 
-\hline
-0 (None) & Schema meta data &   \\
+Since all ifcRDF datasets are compatible with all layers of the ifcOWL ontology (Fig. \ref{fig:ifcOWL-layers}, b), a user can choose the best one based on the requirements of the concrete use case and tools. For instance, many Linked Data applications that need to query entity properties, extract the type hierarchy, or convert ifcRDF datasets back to object-oriented data models it is sufficient to use the \textbf{ifcOWL-Lite} ontology. In case of reasoning about data that includes inverse properties, it is recommended to use \textbf{ifcOWL-Standard} ontology. If an RDF dataset needs to be modified and data validated using type and cardinality constraints, \textbf{ifcOWL-Advanced} ontology is the right choice.
 
-\hline
-1 & All type names &   \\
 
-\hline
-2 & Entity type hierarchy &   \\
-
-\hline
-3 & Enumeration \& Select data types & \\
-
-\hline
-4 (Lite) & Property names and value types &   \\
-
-\hline
-5 & Keys &   \\
-
-\hline
-6 (Standard) & Inverse properties &   \\
-
-\hline
-7 & Property cardinality restrictions  &   \\
-
-\hline
-8 (Advanced) & List type cardinality restrictions  &   \\
-
-\hline
-9 (Full) & Property value types with exact value ranges  & Not supported by the converter  \\
-
-\hline
-\end{tabularx}
-\caption{Levels of details of ifcOWL ontology}
-\label{tab:ifcOWL-levels}
-\end{table}
-
-Having multiple versions of the same ontology and knowing exactly that every ifcRDF dataset will be compatible with any related ifcOWL ontology (see Fig. \ref{fig:ifcOWL-multilayered}) user can choose the best one based on the requirements of the concrete use case and tools used. For instance, when it is required to query entity properties, extract the type hierarchy, or convert ifcRDF datasets back to object-oriented data models it is enough to use \textbf{ifcOWL-Lite} ontology. It case of reasoning about data including inverse properties, it is recommended to use \textbf{ifcOWL-Standard} ontology. When data validation, for example, checking type and cardinality constraints is needed \textbf{ifcOWL-Advanced} ontology is the most reasonable choice.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.75\textwidth]{images/ifcOWL-multilayer.png}
-\caption{A multilayer ifcOWL ontology}
-\label{fig:ifcOWL-multilayered}
-\end{figure}
-
+% \begin{figure}
+% \centering
+% %\def\svgwidth{\textwidth}
+% \def\svgscale{1}
+% \input{images/image.pdf_tex}
+% %{\includesvg{images/test-2}}
+% %\includegraphics[width=0.75\textwidth]{images/ifcOWL-multilayer-2.png}
+% \caption{A multilayer ifcOWL ontology}
+% \label{fig:ifcOWL-multilayered}
+% \end{figure}
