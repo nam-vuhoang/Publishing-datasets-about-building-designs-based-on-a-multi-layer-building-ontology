@@ -33,11 +33,30 @@ breakautoindent=true}
 
 \AtBeginDocument{%
   \renewcommand{\thelstlisting}{\arabic{lstlisting}}
+ }
+
+%\spnewtheorem{principle}{Principle}{\bfseries}{\rmfamily}
+
+\AtBeginDocument{
+    \newtheoremstyle{principleStyle}
+        {1.5\topsep} % Space above, default \topsep
+        {\topsep} % Space below, default \topsep
+        {\itshape} % Body font
+        {} % Indent amount, example: \parindent
+        {\bfseries\itshape} % Theorem head font
+        {.} % Punctuation after theorem head
+        {.5em} % Space after theorem head
+        {} % Theorem head spec (can be left empty, meaning `normal')
+        
+    \theoremstyle{principleStyle} \newtheorem{principle}{Principle}
 }
 
-\spnewtheorem{principle}{Principle}{\bfseries}{\rmfamily}
-
 %\spnewtheorem{datasetsRule}{Datasets Rule}{\bfseries}{\rmfamily}
+
+%
+% THEOREMS
+%
+\usepackage{amsthm}
 
 
 %
@@ -77,15 +96,19 @@ breakautoindent=true}
 %\newcommand{\REVIEW}[1]{\textit{#1}}
 
 % ifcOWL layer names
-\newcommand{\simple}{\textbf{Simple}}
-\newcommand{\standard}{\textbf{Standard}}
-\newcommand{\extended}{\textbf{Extended}}
+\newcommand{\simple}{\textnormal{\textbf{Simple}}}
+\newcommand{\standard}{\textnormal{\textbf{Standard}}}
+\newcommand{\extended}{\textnormal{\textbf{Extended}}}
 
-\newcommand{\ifcowl}{\textbf{ifcOWL}}
+\newcommand{\ifcowl}{\textnormal{\textbf{ifcOWL}}}
 \newcommand{\ifcsimple}{\ifcowl{}-\simple{}}
 \newcommand{\ifcstandard}{\ifcowl{}-\standard{}}
 \newcommand{\ifcextended}{\ifcowl{}-\extended{}}
 \newcommand{\ifcrdf}{\textbf{ifcRDF}}
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DOCUMENT
