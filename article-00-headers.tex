@@ -2,7 +2,9 @@
 
 \usepackage{makeidx}    % allows indexgeneration
 \usepackage{graphicx}   % allows \includegraphics
+%\usepackage[sorting=none]{biblatex}
 \usepackage{cite}       % enables autonumbering in cites
+\usepackage{titlesec}   % enables \titlespacing
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,26 +39,36 @@ breakautoindent=true}
 
 %\spnewtheorem{principle}{Principle}{\bfseries}{\rmfamily}
 
-\AtBeginDocument{
-    \newtheoremstyle{principleStyle}
-        {1.5\topsep} % Space above, default \topsep
-        {0.5\topsep} % Space below, default \topsep
-        {\itshape} % Body font
-        {} % Indent amount, example: \parindent
-        {\bfseries\itshape} % Theorem head font
-        {.} % Punctuation after theorem head
-        {.5em} % Space after theorem head
-        {} % Theorem head spec (can be left empty, meaning `normal')
+% \AtBeginDocument{
+%     \newtheoremstyle{principleStyle}
+%         {1.5\topsep} % Space above, default \topsep
+%         {0.5\topsep} % Space below, default \topsep
+%         {\itshape} % Body font
+%         {} % Indent amount, example: \parindent
+%         {\bfseries\itshape} % Theorem head font
+%         {.} % Punctuation after theorem head
+%         {.5em} % Space after theorem head
+%         {} % Theorem head spec (can be left empty, meaning `normal')
         
-    \theoremstyle{principleStyle} \newtheorem{principle}{Principle}
-}
+%     \theoremstyle{principleStyle} \newtheorem{principle}{Principle}
+% }
+
+\titlespacing*{\section}
+    {0pt}{\baselineskip}{0.5\baselineskip}    % {<left>}{<before-sep>}{<after-sep>}
+
+\titlespacing*{\subsection}
+    {0pt}{0.8\baselineskip}{0.5\baselineskip}
+    
+\titlespacing*{\subsubsection}
+    {0pt}{0.8\baselineskip}{0.5em}
+
 
 %\spnewtheorem{datasetsRule}{Datasets Rule}{\bfseries}{\rmfamily}
 
 %
 % THEOREMS
 %
-\usepackage{amsthm} % enables \newtheorem{}{}
+%\usepackage{amsthm} % enables \newtheorem{}{}
 
 
 %
@@ -109,8 +121,7 @@ breakautoindent=true}
 \newcommand{\ifcextended}{\ifcowl{}-\extended{}}
 
 \newcommand{\ifcconverter}{\bname{IFC2LD}}
-
-
+\newcommand{\ifcld}{\ifcconverter}
 
 
 

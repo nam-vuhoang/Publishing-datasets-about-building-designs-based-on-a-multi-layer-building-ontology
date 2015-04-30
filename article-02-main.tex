@@ -15,7 +15,7 @@ The function and rule definitions, type constraints and derived attributes speci
 One goal in the conversion is to keep the property names simple and understandable. Therefore domain and range constraints (specified by \name{rdfs:domain} and \name{rdfs:range}) are not included in \ifcowl{}. Firstly, there is no need to verify types or to infer types based on properties of \ifcowl{}. Secondly, in the IFC schema the property names are \emph{local} and the same property name can appear in multiple different classes. In RDF property names are \emph{global} and the basic facilities given by domains and ranges do not provide any direct way to indicate property restrictions that are local to a class \cite{world2014rdf}. 
 %Finally, direct support for such declarations is provided by OWL constructs, e.g. \name{owl:\-onProperty}.
 
-All constructs related to EXPRESS, STEP or IFC specifications belong to separate namespaces shown below with prefixes \name{expr:}, \name{step:} and \name{ifc:} accordingly (instead of \name{IFCXXX} there should be the name of IFC version, e.g. \name{IFC4\_ADD1}):
+All constructs related to EXPRESS, STEP or IFC specifications belong to separate namespaces shown below with prefixes \name{expr:}, \name{step:} and \name{ifc:} accordingly (\name{IFCXXX} should be replaced by the name of an IFC version, e.g. \name{IFC4\_ADD1}):
 
 %\begin{lstlisting}[caption={Namespace definitions},label=lst:ifcOWL-namespaces]
 \begin{lstlisting}
@@ -131,29 +131,6 @@ In IFC type \name{Ifc\-Time\-Stamp} is defined as \name{INTEGER} which represent
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Entity Datatype Declarations
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsubsection{Entity Datatypes} correspond to classes in object-oriented languages. Each type may have one super\-type. An attribute is defined with a data\-type, cardinalities and can be marked as optional. An entity data\-type should be converted to an \name{owl:\-Class} which is subclass of its superclass (if any) or \name{expr:\-Entity\-Class}. It was decided to make all entity properties be functional (the maximum cardinality is 1). 
-
-Entity attribute cardinalities can be only from 0 to 1, even if this attribute is a set of values. In this case the attribute type is an external aggregated data\-type, as in:
-
-%\begin{lstlisting}[caption={Entity data\-types}, label=lst:ifcOWL-defined-types]
-\begin{lstlisting}
-ifc:IfcProperty a owl:Class ; rdfs:subClassOf expr:EntityClass .
-ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
-    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:coordinates;
-                      owl:allValuesFrom ifc:LIST_1_3_IfcLengthMeasure ] ;
-    # only for Extended layer
-    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:coordinates;
-                      owl:cardinality "1"^^xsd:integer ] .
-
-# only for Standard & Extended layers
-[] a owl:AllDisjointClasses ;
-    owl:members ( ifc:IfcComplexProperty ifc:IfcSimpleProperty ) .
-\end{lstlisting}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Aggregated Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -161,31 +138,46 @@ ifc:IfcComplexProperty a owl:Class ; rdfs:subClassOf ifc:IfcProperty ;
 \name{ARRAY} is specified with start and end indexes while other types are specified with min and max cardinalities.
 
 Any aggregated type in \ifcowl{} is a subclass of \name{expr:SetClass},
-\name{expr:ListClass}, \name{expr:ArrayClass} or \name{expr:BagClass} which are subclasses of \name{expr:\-Collec\-tion\-Class}. The latter has one nonfunctional property \name{expr:slot} with type \name{expr:Slot} and four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index}. Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}. Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
-
-% In order to declare these types, new classes were created in a similar way as Ordered List Ontoloty \cite{olo:ontology}:
-% \begin{itemize}
-% \item Class \name{expr:\-Collec\-tion\-Class} has four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index} and a nonfunctional property \name{expr:slot} with type \name{expr:Slot}.
-% \item Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}.
-% \item Classes \name{expr:SetClass}, \name{expr:ListClass}, \name{expr:ArrayClass} and \name{expr:BagClass} are subclasses of \name{expr:\-Collec\-tion\-Class}.
-% \end{itemize}
-
-% Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
+\name{expr:ListClass}, \name{expr:ArrayClass} or \name{expr:BagClass}. Their common superclass \name{expr:\-Collec\-tion\-Class} has one nonfunctional property \name{expr:slot} with type \name{expr:Slot} and four functional properties: \name{expr:isOrdered}, \name{expr:item\-Type}, \name{expr:\-size}, \name{expr:\-start\-Index}, \name{expr:\-end\-Index}. Class \name{expr:Slot} has two functional properties \name{expr:item} (the actual collection item value), \name{expr:index} and also optional functional properties \name{expr:previous}, \name{expr:next}. Below is a fragment of definition of type \name{SET [2:?] OF IfcProfileDef}:
 
 \begin{lstlisting}
 # all layers:
- ifc:SET_2_UNDEFINED_OF_IfcProfileDef a owl:Class ;
-    rdfs:subClassOf ifc:SET_2_UNDEFINED , ifc:SET_OF_IfcProfileDef .
- ifc:SET_2_UNDEFINED, SET_OF_IfcProfileDef rdfs:subClassOf expr:SetClass .
+ ifc:SET_2_UNLIMITED_OF_IfcProfileDef a owl:Class ;
+    rdfs:subClassOf ifc:SET_2_UNLIMITED , ifc:SET_OF_IfcProfileDef .
+ ifc:SET_2_UNLIMITED, SET_OF_IfcProfileDef rdfs:subClassOf expr:SetClass .
 
 # only for layer Extended:
- ifc:SET_2_UNDEFINED rdfs:subClassOf rdfs:subClassOf [ a owl:Restriction ;
+ ifc:SET_2_UNLIMITED rdfs:subClassOf rdfs:subClassOf [ a owl:Restriction ;
     owl:onProperty expr:slot ; owl:minCardinality "2"^^xsd:integer ] .
  ifc:SET_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ;
     owl:onProperty expr:slot ; owl:allValuesFrom ifc:SLOT_OF_IfcProfileDef ].
  ifc:SLOT_OF_IfcProfileDef rdfs:subClassOf [ a owl:Restriction ; owl:onProperty expr:item ; owl:allValuesFrom ifc:IfcProfileDef ] .
 \end{lstlisting}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Entity Datatype Declarations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Entity Datatypes} correspond to classes in object-oriented languages. Each type may have one super\-type. An attribute is defined with a data\-type, can be a list or a set with \emph{any} cardinalities and can be marked as optional. An entity data\-type should be converted to a subclass of its super\-class (\name{expr:\-Entity\-Class} is the most generic). It was decided to make maximum cardinality of any entity property be \name{1}. In case if the attribute type is a list or a set then a new external aggregated data\-type is created. Below is an example for a type with attributes \name{Profiles : SET [2:?] OF IfcProfileDef} and \name{Label : OPTIONAL IfcLabel}:
+
+%\begin{lstlisting}[caption={Entity data\-types}, label=lst:ifcOWL-defined-types]
+\begin{lstlisting}
+ifc:IfcCompositeProfileDef a owl:Class ; rdfs:subClassOf ifc:IfcProfileDef ;
+  # only for Standard, Extended layers
+    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:profiles;
+                      owl:allValuesFrom ifc:SET_2_UNLIMITED_IfcProfileDef ] ;
+    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:label;
+                      owl:allValuesFrom ifc:Label ] ;
+  # only for Extended layer
+    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:profiles;
+                      owl:cardinality "1"^^xsd:integer ] ;
+    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:label;
+                      owl:minCardinality "0"^^xsd:integer ] ;
+    rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:label;
+                      owl:maxCardinality "1"^^xsd:integer ] .
+\end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generating ifcRDF Datasets From IFC Data
@@ -194,7 +186,7 @@ Any aggregated type in \ifcowl{} is a subclass of \name{expr:SetClass},
 \section{Generating ifcRDF Datasets From IFC Data}
 \label{sec:ifcRDF}
 
-\subsubsection{Header Section} IFC data is exchanged as \emph{STEP physical files} (SPF). SPF format is defined in ISO 10303-21 \cite{ISO10303-21}. A SPF header section includes a list of STEP-specific metadata entities with types \name{FileDescription} \name{FileName} and \name{FileSchema}. %described in \cite{buildingSMART:ifc-header}. 
+\subsubsection{Header Section.} IFC data is exchanged as \emph{STEP physical files} (SPF) format of which is defined in ISO 10303-21 \cite{ISO10303-21}. A SPF header section includes a list of STEP-specific metadata entities with types \name{FileDescription}, \name{FileName} and \name{FileSchema}. %described in \cite{buildingSMART:ifc-header}. 
 They are exported as objects of STEP entities, some attributes are duplicated as Dublin Core (DC) metadata annotations, for example:
 
 \begin{lstlisting}
@@ -208,22 +200,22 @@ They are exported as objects of STEP entities, some attributes are duplicated as
 \end{lstlisting}
 
 
-\subsubsection{Data Section} In a SPF data section each entity is identified with a line number.
+\subsubsection{Data Section.} In a SPF data section each entity is identified with a line number.
 %, an entity data\-type and a list of values. 
-All entities of \name{Ifc\-Root}-derived types have a GUID in IFC. They are converted into URI resources with format \name{GUID\_\textless{}guid\textgreater{}} where \name{guid} is in the hexadecimal string representation (not including the character \name{\$}). Regarding to anonymous IFC entities, it can be chosen whether to export them as blank nodes or create them a URI in a format \name{LINE\_\textless{}lineNumber\textgreater{}} (in a user defined namespace). Note that line numbers are used only for linking entities inside a SPF, and they are unstable. Naming is required when the dataset is used together with OWL 2 EL/QL as these profiles do not allow anonymous individuals. Below is an example of IFC data exported to an RDF dataset compatible with OWL 2 RL:
+All entities of \name{Ifc\-Root}-derived types have a GUID in IFC. They are converted into URI resources with format \name{GUID\_\emph{\textless{}guid\textgreater{}}} where \emph{guid} is in the hexadecimal string representation (not including the character \name{\$}). Regarding to anonymous IFC entities, it can be chosen whether to export them as blank nodes or create them a URI in a format \name{LINE\_\emph{\textless{}lineNumber\textgreater{}}} (in a user defined namespace). Note that line numbers are used only for linking entities inside a SPF, and they are unstable. Naming is required when the dataset is used together with OWL 2 EL/QL as these profiles do not allow anonymous individuals. Below is an example of IFC data exported to an RDF dataset compatible with OWL 2 RL:
 
 \begin{lstlisting}
-:GUID_1916794F-5605-4499-9AB0-F155DE8D3B6C
-    a               ifc:IfcPropertySet ; # entity type
-    ifc:globalId    [ a ifc:IfcGloballyUniqueId ; # defined type
-                     rdf:value "0P5dbFLWL4cPgmyLNUZJji"^^xsd:string ] ;
-    ifc:hasProperties  _:b11 .
-_:b11 a ifc:SET_1_UNLIMITED_OF_IfcProperty ; # entity type
+:GUID_1916794F-5605-4499-9AB0-F155DE8D3B6C     # entity as an URI
+    a            ifc:IfcPropertySet ;          # entity type
+    ifc:globalId [ a ifc:IfcGloballyUniqueId ; # property with defined type
+                   rdf:value "0P5dbFLWL4cPgmyLNUZJji"^^xsd:string ] ;
+    ifc:hasProperties  _:b11 .                 # property w/ aggregated type
+_:b11 a ifc:SET_1_UNLIMITED_OF_IfcProperty ;
     expr:size "3"^^xsd:integer ;
     expr:itemType ifc:IfcProperty ;
     expr:slot _:b12, _:b13, _:b14 .
 _:b12 a ifc:SLOT_OF_IfcProperty ;
-    expr:item [ a ifc:IfcPropertySingleValue ; # entity type
+    expr:item [ a ifc:IfcPropertySingleValue ;  # entity as a blank node
                 ifc:name "initial_GUID"^^xsd:string ;
                 ifc:nominalValue  _:b15 ] .
 \end{lstlisting}
@@ -235,28 +227,37 @@ _:b12 a ifc:SLOT_OF_IfcProperty ;
 
 The \textbf{IFC2LD converter}, \ifcowl{} ontologies, and example \ifcrdf{} datasets (together with the original IFC files) are available for use from the addresses:
 
-\vspace{2mm}
-\begin{tabular}{|l|l|}
-\hline
-Ontologies: & \texttt{http://drumbeat.cs.hut.fi/owl/} \\
-\hline
-Example datasets & \\
-- IFC files: & \texttt{http://drumbeat.cs.hut.fi/ifc/} \\
-- RDF datasets: & \texttt{http://drumbeat.cs.hut.fi/rdf/} \\
-\hline
-Converter & \\
-- service: & \texttt{http://drumbeat.cs.hut.fi/home/} \\
-- open source: & \texttt{https://github.com/Web-of-Building-Data/Ifc2Rdf} \\
-\hline
-\end{tabular}
+% \vspace{0.5\topsep}
+\noindent
+\begin{scriptsize}
+\begin{center}
+    \def\arraystretch{1.2}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabularx}{0.90\textwidth}{|l|X|}
+        \hline
+        Ontologies: & \texttt{http://drumbeat.cs.hut.fi/owl/} \\
+        \hline
+        Example files & \\
+        - IFC data: & \texttt{http://drumbeat.cs.hut.fi/ifc/} \\
+        - RDF datasets: & \texttt{http://drumbeat.cs.hut.fi/rdf/} \\
+        \hline
+        IFC2LD Converter & \\
+        - online service: & \texttt{http://drumbeat.cs.hut.fi/home/} \\
+        - download binary: & \texttt{http://drumbeat.cs.hut.fi/ifc2ld/} \\
+        - source code: & \texttt{https://github.com/Web-of-Building-Data/Ifc2Rdf} \\
+        \hline
+    \end{tabularx}
+\end{center}
+\end{scriptsize}
 
 
-\section{Summary and future work}
-\label{sec:conclusion}
+
+\section{Summary and future works}
+\label{sec:summary}
 
 We have presented \ifcowl{}, a multilayer ontology of building designs based on the widely adopted IFC standard. The ontology is 
-derived from the IFC schema with the \texfbf{IFC2LD} converter that can also produce RDF datasets from IFC files. 
+derived from the IFC schema with the \ifcld{} converter that can also produce RDF datasets from IFC files. 
 
-The \ifcowl{} ontologies and \ifcrdf{} datasets are currently used in a variety of Linked Data oriented use cases \cite{torma2013semantic} developed in the DRUMBEAT project. We are exploring the possibilities to use the IFC2LD converter in the generation of metadata for \ifcrdf{} datasets and, in some cases, also linksets between datasets.
+The \ifcowl{} ontologies and \ifcrdf{} datasets are currently used in a variety of Linked Data oriented use cases \cite{torma2013semantic} developed in the DRUMBEAT project. We are exploring the possibilities to use the \ifcld{} converter in the generation of metadata for \ifcrdf{} datasets and, in some cases, also linksets between datasets.
 
 
