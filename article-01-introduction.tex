@@ -17,7 +17,7 @@ BIM models could provide a natural framework to organize and manage building rel
 interlinked manner. This provides a poor basis for open utilization of building information and the 
 emergence of new, innovative applications.
 To make BIM models accessible on the Web \cite{torma2014wobd}, we have developed the 
-\bname{WebIFC converter} to 
+\bname{IFC2LD converter} to 
 derive OWL ontologies from the IFC schema (\ifcowl{}), and RDF datasets from IFC files 
 (\ifcrdf{}). The \ifcowl{} specifies concepts, relations, and constraints for \ifcrdf{} datasets that replicate the content of IFC files. 
 All terms defined in \ifcowl{}  must thus be based on the corresponding constructs in 
@@ -25,9 +25,10 @@ the IFC schema.
 
 \begin{figure}[h]
 \centering
-\includegraphics[angle=0,width=1.0\textwidth]{images/ifcOWL-multilayers.png}
-%\includegraphics{images/ifcOWL-multilayers.jpg}
-\caption{Multiple layers of \ifcowl{} ontology}
+% \includegraphics[angle=0,width=1.0\textwidth]{images/ifcOWL-multilayers.png}
+\includegraphics{images/ifcOWL-multilayers-6.png}
+%\caption{Multiple layers of \ifcowl{} ontology}
+\caption{Producing IFC ontologies and datasets for use in Linked Data Platform}
 \label{fig:ifcOWL-layers}
 \end{figure}
 
@@ -95,15 +96,3 @@ and equipment for a wider range of stakeholders and use cases. Moreover, IFC dat
 when generating CityGML models. % GityGML has also been converted into OWL. 
 
 In the rest of this paper we describe the conversions to \ifcowl{} and \ifcrdf{}, present the deployment of ontologies, example datasets and the converter, and finish with summary and future work. 
-
-
-% \begin{figure}
-% \centering
-% %\def\svgwidth{\textwidth}
-% \def\svgscale{1}
-% \input{images/image.pdf_tex}
-% %{\includesvg{images/test-2}}
-% %\includegraphics[width=0.75\textwidth]{images/ifcOWL-multilayer-2.png}
-% \caption{A multilayer ifcOWL ontology}
-% \label{fig:ifcOWL-multilayered}
-% \end{figure}
