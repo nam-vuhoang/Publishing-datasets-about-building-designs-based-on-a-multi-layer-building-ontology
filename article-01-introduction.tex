@@ -13,8 +13,8 @@ using Building Information Modeling (BIM) tools \cite{eastman2011bim}. A widely 
 IFC (Industry Foundation Classes) \cite{ISO16739,liebich2010unveiling} provides a common representation for BIM models of 
 different design disciplines. All major BIM tools support IFC and can export BIM models to IFC files for exchange with other parties.
 
-BIM models could provide a natural framework to organize and manage information about buildings. However, a big obstacle is the difficulty to access and utilize BIM models which have traditionally been shared shared through point-to-point file exchange. They cannot be used in an online, granular, and 
-interlinked manner and provides a poor basis for open utilization of building information and the 
+BIM models could provide a natural framework to organize and manage building related information. However, a big obstacle is the difficulty to access and utilize BIM models which have traditionally been shared through point-to-point file exchange. They cannot be used in an online, granular, and 
+interlinked manner. This provides a poor basis for open utilization of building information and the 
 emergence of new, innovative applications.
 To make BIM models accessible on the Web \cite{torma2014wobd}, we have developed the 
 \bname{WebIFC converter} to 
@@ -35,14 +35,13 @@ The conversion of IFC files to \ifcrdf{} is straightforward and can be done
 without information loss.
 Ideally, there would also be just one \ifcowl{} ontology for each version of the IFC schema. However,
 there are possibilities and reasons to convert the IFC schema to OWL in several different ways. Firstly, there is a \emph{mismatch} between the modeling constructs of OWL and 
-EXPRESS data definition language used to specify the IFC schema. Secondly, a simple version of \ifcowl{} \emph{compatible with
-restricted OWL profiles} (OWL 2 EL or QL) \cite{motik2009owl} is useful to support ontology
+EXPRESS data definition language \cite{schenck1994information} used to specify the IFC schema. Secondly, a simple version of \ifcowl{} \emph{compatible with
+restricted OWL profiles} (OWL 2 EL or QL) \cite{motik2012owl} is useful to support ontology
 reasoning or inexact reasoning. Thirdly, for most practical purposes only a subset of ontology
 information is required, as no validation or checking of \ifcrdf{} data is needed; it can
-be considered \emph{practically valid} w.r.t. the schema, since BIM tools use certified converters, and icfRDF can sensibly only be used in a
+be considered \emph{practically valid} w.r.t. the schema, since BIM tools use certified converters. Moreover, icfRDF can sensibly only be used in a
 \emph{read-only} fashion, since BIM models will be maintained in the native formats of BIM
-tools. Fourthly, a full conversion of the IFC schema will make \ifcowl{}
-\emph{unnecessarily large}, and difficult to understand or manipulate.
+tools. In addition, a full conversion of the IFC schema produces a huge ontology, difficult to understand or manipulate.
 
 Consequently, we convert the IFC schema into a \emph{flexible, multilayer \ifcowl{} ontology}
 in a way that \emph{\ifcrdf{} is compatible with any of the layers} (Fig. \ref{fig:ifcOWL-layers}). 
@@ -89,6 +88,14 @@ From the previous IFC-to-OWL/RDF conversions
 is based on OWL 2 profiles, produces a flexible multilayer ontology, applies \emph{very different methods of data\-type definitions} and is specifically targeted to
 real-life Linked Data applications. It uses stable URIs for entities, in contrast to the previous approaches
 where the URIs were instable across models versions.
+
+CityGML \cite{kolbe2005citygml} is a surface model for buildings, which can be useful to visitors for 
+indoor navigation. IFC contains complementary information about building design, structure, 
+and equipment for a wider range of stakeholders and use cases. Moreover, IFC data can be one source 
+when generating CityGML models. % GityGML has also been converted into OWL. 
+
+In the rest of this paper we describe the conversions to \ifcowl{} and \ifcrdf{}, present the deployment of ontologies, example datasets and the converter, and finish with summary and future work. 
+
 
 % \begin{figure}
 % \centering
