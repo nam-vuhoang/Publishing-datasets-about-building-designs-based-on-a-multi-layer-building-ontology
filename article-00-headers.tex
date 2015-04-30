@@ -2,7 +2,8 @@
 
 \usepackage{makeidx}    % allows indexgeneration
 \usepackage{graphicx}   % allows \includegraphics
-%\usepackage[sorting=none]{biblatex}
+% \usepackage[sorting=none]{biblatex} % http://www.ctan.org/tex-archive/help/Catalogue/entries/biblatex.html
+
 \usepackage{cite}       % enables autonumbering in cites
 \usepackage{titlesec}   % enables \titlespacing
 
@@ -86,6 +87,9 @@ breakautoindent=true}
 \graphicspath{{images/}}
 
 
+%
+% REFERENCES
+%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +179,13 @@ The volume of data produced in the construction industry is rapidly growing but,
 
 This work has been carried out at Aalto University in research projects DRUM (RYM/PRE 2010-2014) and DRUMBEAT (2014-2017), funded by Tekes, Aalto University, and the participating companies. 
 
-\input{article-03-bibliography.tex}
+%\input{article-03-bibliography.tex}
+
+% \bibliographystyle{splncs03}
+\bibliographystyle{splncs}
+\bibliography{article.bib}
+
+% \printbibliography{}
 
 
 \clearpage
