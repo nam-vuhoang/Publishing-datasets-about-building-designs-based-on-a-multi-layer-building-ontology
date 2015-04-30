@@ -17,7 +17,7 @@ BIM models could provide a natural framework to organize and manage information 
 interlinked manner and provides a poor basis for open utilization of building information and the 
 emergence of new, innovative applications.
 To make BIM models accessible on the Web \cite{torma2014wobd}, we have developed the 
-\name{WebIFC converter} to 
+\bname{WebIFC converter} to 
 derive OWL ontologies from the IFC schema (\ifcowl{}), and RDF datasets from IFC files 
 (\ifcrdf{}). The \ifcowl{} specifies concepts, relations, and constraints for \ifcrdf{} datasets that replicate the content of IFC files. 
 All terms defined in \ifcowl{}  must thus be based on the corresponding constructs in 
@@ -49,27 +49,30 @@ in a way that \emph{\ifcrdf{} is compatible with any of the layers} (Fig. \ref{f
 New representational constructs are introduced at more comprehensive levels which therefore 
 provide increasing detailed type information about \ifcrdf{} data: 
 
-\vspace{2mm}
-% \noindent
-\begin{small}
-\begin{tabular}{|l|l|l|}
- \hline
-\textbf{Layer} & \textbf{Profiles} & \textbf{Included schema information} \\
-\hline
- \hline
-\name{ifcOWL-Simple} & OWL 2 EL & Schema meta data \\
-& OWL 2 QL &  All type definitions and hierarchies \\
-& OWL 2 RL & All entity type properties (names, range types) \\
-\hline 
-\name{ifcOWL-Standard} & OWL 2 RL & Schema meta data \\
-& & All entity type keys \\
-& & All entity type inverse properties \\
-\hline
-\name{ifcOWL-Extended} & OWL 2 RL & All cardinality constraints of properties \\
-& & All cardinality constraints of list types \\
- \hline
-\end{tabular}
-\end{small}
+\vspace{0.5\topsep}
+\noindent
+\begin{scriptsize}
+\begin{center}
+    \def\arraystretch{1.2}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabularx}{0.95\textwidth}{|l|l|X|}
+        \hline
+            \textbf{Layer} & \textbf{Profile} & \textbf{Included schema information} \\
+        \hline
+            ifcOWL-Simple & OWL 2 EL or & Schema meta data plus: \\
+            & OWL 2 QL or & \ \ - All type definitions and hierarchies \\
+            & OWL 2 RL & \ \ - All entity type properties (names, range types) \\
+        \hline 
+            ifcOWL-Standard & OWL 2 RL & All above plus: \\
+            & & \ \ - All entity type keys \\
+            & & \ \ - All entity type inverse properties \\
+        \hline
+            ifcOWL-Extended & OWL 2 RL & All above plus: \\
+            & & \ \ - All cardinality constraints \\
+        \hline
+    \end{tabularx}
+\end{center}
+\end{scriptsize}
 
 %Since all \ifcrdf{} datasets are compatible with all layers of the \ifcowl{} ontology 
 %(Fig. \ref{fig:ifcOWL-layers}), the most appropriate one can be selected based on the requirements of 
@@ -80,9 +83,10 @@ provide increasing detailed type information about \ifcrdf{} data:
 %\name{ifcOWL-Standard} ontology. If an RDF dataset needs to be modified and data validated 
 %using type and cardinality constraints, \name{ifcOWL-Extended} is the correct choice.
 
+
 From the previous IFC-to-OWL/RDF conversions
 \cite{beetz2005ontology,beetz2009ifcowl,pauwels2011interoperability} our approach differs since it
-is based on OWL 2 profiles, produces a flexible multilayer ontology, and is specifically targeted to
+is based on OWL 2 profiles, produces a flexible multilayer ontology, applies \emph{very different methods of data\-type definitions} and is specifically targeted to
 real-life Linked Data applications. It uses stable URIs for entities, in contrast to the previous approaches
 where the URIs were instable across models versions.
 

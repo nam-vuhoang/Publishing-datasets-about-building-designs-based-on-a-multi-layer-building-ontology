@@ -40,7 +40,7 @@ breakautoindent=true}
 \AtBeginDocument{
     \newtheoremstyle{principleStyle}
         {1.5\topsep} % Space above, default \topsep
-        {\topsep} % Space below, default \topsep
+        {0.5\topsep} % Space below, default \topsep
         {\itshape} % Body font
         {} % Indent amount, example: \parindent
         {\bfseries\itshape} % Theorem head font
@@ -56,7 +56,7 @@ breakautoindent=true}
 %
 % THEOREMS
 %
-\usepackage{amsthm}
+\usepackage{amsthm} % enables \newtheorem{}{}
 
 
 %
@@ -96,15 +96,18 @@ breakautoindent=true}
 %\newcommand{\REVIEW}[1]{\textit{#1}}
 
 % ifcOWL layer names
-\newcommand{\simple}{\textnormal{\textbf{Simple}}}
-\newcommand{\standard}{\textnormal{\textbf{Standard}}}
-\newcommand{\extended}{\textnormal{\textbf{Extended}}}
+\newcommand{\bname}[1]{\textnormal{\textbf{#1}}}
+\newcommand{\simple}{\bname{Simple}}
+\newcommand{\standard}{\bname{Standard}}
+\newcommand{\extended}{\bname{Extended}}
 
-\newcommand{\ifcowl}{\textnormal{\textbf{ifcOWL}}}
+\newcommand{\ifcowl}{\bname{ifcOWL}}
+\newcommand{\ifcrdf}{\bname{ifcRDF}}
 \newcommand{\ifcsimple}{\ifcowl{}-\simple{}}
 \newcommand{\ifcstandard}{\ifcowl{}-\standard{}}
 \newcommand{\ifcextended}{\ifcowl{}-\extended{}}
-\newcommand{\ifcrdf}{\textbf{ifcRDF}}
+
+\newcommand{\ifcweb}{\bname{ifcWeb}}
 
 
 
