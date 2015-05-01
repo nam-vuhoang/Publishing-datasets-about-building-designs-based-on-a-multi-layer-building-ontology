@@ -158,17 +158,22 @@ Any aggregated type in \ifcowl{} is a subclass of \name{expr:SetClass},
 % Entity Datatype Declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Entity Datatypes} correspond to classes in object-oriented languages. Each type may have one super\-type. Thus, an entity data\-type should be converted into a subclass of its super\-class or of \name{expr:\-Entity\-Class}. For instance, a type with attributes \name{Profiles : SET [2:?] OF IfcProfileDef} and \name{Label : OPTIONAL IfcLabel} is defined as follow:
+\subsubsection{Entity Datatypes} correspond to classes in object-oriented languages. Each type may have one super\-type. Thus, an entity data\-type should be converted into a subclass of its super\-class or of \name{expr:\-Entity\-Class}.
+
+The minimum cardinality of an optional entity property is \name{0}. The maximum cardinality is always \name{1}. If an attribute type is set, list, or array, then a new aggregation data\-type is defined, for example, \name{ifc:\-SET\_\-2\_\-UNLIMITED\_\-IfcProfileDef} was created for property \name{Profiles : SET [2:?] OF IfcProfileDef}. This approach allows to represent all multiple attributes in the same manner and provides possibilities to constrain the cardinalities, even when the minimum cardinality is not \name{0} or \name{1}.
+
+
+% Below is an example of definition of a type with attributes \name{Profiles : SET [2:?] OF IfcProfileDef} and \name{Label : OPTIONAL IfcLabel}:
 
 %\begin{lstlisting}[caption={Entity data\-types}, label=lst:ifcOWL-defined-types]
 \begin{lstlisting}
 ifc:IfcCompositeProfileDef a owl:Class ; rdfs:subClassOf ifc:IfcProfileDef ;
-  # only for Standard, Extended layers
+  # only for the Standard, Extended layers
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:profiles;
                       owl:allValuesFrom ifc:SET_2_UNLIMITED_IfcProfileDef ] ;
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:label;
                       owl:allValuesFrom ifc:Label ] ;
-  # only for Extended layer
+  # only for the Extended layer
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:profiles;
                       owl:cardinality "1"^^xsd:integer ] ;
     rdfs:subClassOf [ a owl:Restriction; owl:onProperty ifc:label;
@@ -177,7 +182,6 @@ ifc:IfcCompositeProfileDef a owl:Class ; rdfs:subClassOf ifc:IfcProfileDef ;
                       owl:maxCardinality "1"^^xsd:integer ] .
 \end{lstlisting}
 
-The minimum property cardinality of \name{ifc:label} is 0 because it is optional. The maximum cardinality of any property is 1. If an attribute type is a set (or a list), then a new specific aggregation must be defined, for example, \name{SET\_\-2\_\-UNLIMITED\_\-IfcProfileDef} is created to specify property \name{ifc:profiles}. This approach allows to represent lists, sets and arrays in the same manner and provides possibilities to constraint the attribute cardinalities.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,8 +191,9 @@ The minimum property cardinality of \name{ifc:label} is 0 because it is optional
 \section{Generating ifcRDF Datasets from IFC Data}
 \label{sec:ifcRDF}
 
-\subsubsection{Header Section.} IFC data is exchanged as \emph{STEP physical files} (SPF) format of which is defined in ISO 10303-21 \cite{ISO10303-21}. A SPF header section includes a list of STEP-specific metadata entities with types \name{FileDescription}, \name{FileName} and \name{FileSchema}. %described in \cite{buildingSMART:ifc-header}. 
-They are exported as objects of STEP entities, some attributes are duplicated as Dublin Core (DC) metadata annotations, for example:
+As mentioned in Sect. \ref{sec:introduction}, IFC data is exchanged in STEP Physical Files (SPF). The IFC-SPF-to-RDF conversion is aimed to produce \ifcrdf{} datasets including \emph{all} information stored in SPFs and compatible with any \ifcowl{} layer.
+
+\subsubsection{Header Section} includes STEP-specific metadata as normal data-section entities. Their types -- \name{FileDescription}, \name{FileName}, and \name{FileSchema} -- are defined in STEP. They are exported as normal entities, but some attributes of them are duplicated as Dublin Core (DC) metadata annotations, for example:
 
 \begin{lstlisting}
 <http://example.org>  a void:DataSet ;
@@ -201,7 +206,7 @@ They are exported as objects of STEP entities, some attributes are duplicated as
 \end{lstlisting}
 
 
-\subsubsection{Data Section.} In a SPF data section each entity is identified with a line number.
+\subsubsection{Data Section} includes entities, each of which is identified with a line number.
 %, an entity data\-type and a list of values. 
 All entities of \name{Ifc\-Root}-derived types have a GUID in IFC. They are converted into URI resources with format \name{GUID\_\emph{\textless{}guid\textgreater{}}} where \emph{guid} is in the hexadecimal string representation (not including the character \name{\$}). Regarding to anonymous IFC entities, it can be chosen whether to export them as blank nodes or create them a URI in a format \name{LINE\_\emph{\textless{}lineNumber\textgreater{}}} (in a user defined namespace). Note that line numbers are used only for linking entities inside a SPF, and they are unstable. Naming is required when the dataset is used together with OWL 2 EL/QL as these profiles do not allow anonymous individuals. Below is an example of IFC data exported to an RDF dataset compatible with OWL 2 RL:
 
@@ -224,16 +229,20 @@ _:b12 a ifc:SLOT_OF_IfcProperty ;
 
 %Data\-type of an attribute value is declared obviously only if the attribute has a select data\-type and the value has a defined data\-type. 
 
-\section{Deployment}
+\section{Implementation and Deployment}
+\label{sec:deployment}
 
-The \textbf{IFC2LD converter}, \ifcowl{} ontologies, and example \ifcrdf{} datasets (together with the original IFC files) are available for use from the addresses:
+The algorithm of generating \ifcowl{} ontologies and \ifcrdf{} datasets, including the principles described in Sect. \ref{sec:ifcOWL}-\ref{sec:ifcRDF}, are implemented in our Java program, namely \textbf{IFC2LD converter}. One can use its command-line interface, web interface or application programming interface for converting any IFC schema or data file into \ifcowl{} or \ifcrdf{}. By changing the configuration file, one can also force the converter to adapt various OWL profiles starting from OWL Lite.
 
-% \vspace{0.5\topsep}
-\noindent
-\begin{scriptsize}
-\begin{center}
-    \def\arraystretch{1.2}
-    \setlength{\tabcolsep}{6pt}
+The \textbf{IFC2LD converter}, \ifcowl{} ontologies including different layers for different IFC schema versions, and some sample \ifcrdf{} datasets (together with the original IFC files) are available on the Internet (Table \ref{tab:ifc2ld-web}).
+
+\begin{table}
+    \caption{Contents of ifcOWL layers}
+    \label{tab:ifc2ld-web}
+    \centering
+    \scriptsize
+    \def\arraystretch{1.2}          % vertical space
+    \setlength{\tabcolsep}{6pt}     % horizontal space
     \begin{tabularx}{0.90\textwidth}{|l|X|}
         \hline
         Ontologies: & \texttt{http://drumbeat.cs.hut.fi/owl/} \\
@@ -245,20 +254,17 @@ The \textbf{IFC2LD converter}, \ifcowl{} ontologies, and example \ifcrdf{} datas
         IFC2LD Converter & \\
         - online service: & \texttt{http://drumbeat.cs.hut.fi/home/} \\
         - download binary: & \texttt{http://drumbeat.cs.hut.fi/ifc2ld/} \\
-        - source code: & \texttt{https://github.com/Web-of-Building-Data/Ifc2Rdf} \\
+        % - source code: & \texttt{https://github.com/Web-of-Building-Data/Ifc2Rdf} \\
         \hline
     \end{tabularx}
-\end{center}
-\end{scriptsize}
-
-
+\end{table}
 
 \section{Summary and future works}
 \label{sec:summary}
 
-We have presented \ifcowl{}, a multilayer ontology of building designs based on the widely adopted IFC standard. The ontology is 
+In this paper, we proposed a new approach and principles of creating \ifcowl{}, a multilayer ontology of building designs based on the widely adopted IFC standard. The ontology is 
 derived from the IFC schema with the \ifcld{} converter that can also produce RDF datasets from IFC files. 
 
-The \ifcowl{} ontologies and \ifcrdf{} datasets are currently used in a variety of Linked Data oriented use cases \cite{torma2013semantic} developed in the DRUMBEAT project. We are exploring the possibilities to use the \ifcld{} converter in the generation of metadata for \ifcrdf{} datasets and, in some cases, also linksets between datasets.
+The \ifcowl{} ontologies and \ifcrdf{} datasets are currently used in a variety of Linked-Data-oriented use cases \cite{torma2013semantic} which are developed in the DRUMBEAT project. We are exploring the possibilities to use the \ifcld{} converter in the terms of generation of metadata for linksets between \ifcrdf{} datasets.
 
 
