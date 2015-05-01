@@ -208,7 +208,7 @@ As mentioned in Sect. \ref{sec:introduction}, IFC data is exchanged in STEP Phys
 
 \subsubsection{Data Section} includes entities, each of which is identified with a line number.
 %, an entity data\-type and a list of values. 
-All entities of \name{Ifc\-Root}-derived types have a GUID in IFC. They are converted into URI resources with format \name{GUID\_\emph{\textless{}guid\textgreater{}}} where \emph{guid} is in the hexadecimal string representation (not including the character \name{\$}). Regarding to anonymous IFC entities, it can be chosen whether to export them as blank nodes or create them a URI in a format \name{LINE\_\emph{\textless{}lineNumber\textgreater{}}} (in a user defined namespace). Note that line numbers are used only for linking entities inside a SPF, and they are unstable. Naming is required when the dataset is used together with OWL 2 EL/QL as these profiles do not allow anonymous individuals. Below is an example of IFC data exported to an RDF dataset compatible with OWL 2 RL:
+All entities of \name{Ifc\-Root}-derived types have a GUID in IFC. They are converted into URI resources with format \name{GUID\_\emph{\textless{}guid\textgreater{}}}; where \emph{guid} is in the hexadecimal string representation (not including the character \name{\$}). Regarding to anonymous IFC entities, it can be chosen whether to export them as blank nodes or create them a URI in a format \name{LINE\_\emph{\textless{}lineNumber\textgreater{}}} (in a user defined namespace). Note that line numbers are used only for linking entities inside a SPF, and they are unstable. Naming is required when the dataset is used together with OWL 2 EL/QL as these profiles do not allow anonymous individuals. Below is an example of IFC data exported to an RDF dataset compatible with OWL 2 RL:
 
 \begin{lstlisting}
 :GUID_1916794F-5605-4499-9AB0-F155DE8D3B6C     # entity as an URI
@@ -236,8 +236,8 @@ The algorithm of generating \ifcowl{} ontologies and \ifcrdf{} datasets, includi
 
 The \textbf{IFC2LD converter}, \ifcowl{} ontologies including different layers for different IFC schema versions, and some sample \ifcrdf{} datasets (together with the original IFC files) are available on the Internet (Table \ref{tab:ifc2ld-web}).
 
-\begin{table}
-    \caption{Contents of ifcOWL layers}
+\begin{table}[b]
+    \caption{Internet links to the related research results}
     \label{tab:ifc2ld-web}
     \centering
     \scriptsize
