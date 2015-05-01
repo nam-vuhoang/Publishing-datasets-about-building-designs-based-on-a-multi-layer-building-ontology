@@ -2,10 +2,8 @@
 
 \usepackage{makeidx}    % allows indexgeneration
 \usepackage{graphicx}   % allows \includegraphics
-% \usepackage[sorting=none]{biblatex} % http://www.ctan.org/tex-archive/help/Catalogue/entries/biblatex.html
 
 \usepackage{cite}       % enables autonumbering in cites
-\usepackage{titlesec}   % enables \titlespacing
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +52,8 @@ breakautoindent=true}
 %     \theoremstyle{principleStyle} \newtheorem{principle}{Principle}
 % }
 
+\usepackage{titlesec}   % enables \titlespacing
+
 \titlespacing*{\section}
     {0pt}{\baselineskip}{0.5\baselineskip}    % {<left>}{<before-sep>}{<after-sep>}
 
@@ -84,12 +84,33 @@ breakautoindent=true}
 
 %\usepackage{calc}
 
-\graphicspath{{images/}}
+% \graphicspath{{images/}}
+
+\usepackage{caption}    % enables \captionsetup for tables and figures
+
+\AtBeginDocument{
+    \captionsetup{font=small}
+    \captionsetup{labelfont=bf}
+    % \captionsetup[table]{aboveskip=0pt}
+    \captionsetup[table]{belowskip=0pt}
+
+    % \setlength{\textfloatsep}{10pt}  % distance between floats on the top or the bottom and the text;
+    % \setlength{\floatsep}{0pt}      % distance between two floats;
+    \setlength{\intextsep}{\baselineskip}     % distance between floats inserted inside the page text (using h) and the text proper.
+    
+%     The default values in the article document class with the 10pt option are:
+% \textfloatsep: 20.0pt plus 2.0pt minus 4.0pt;
+% \floatsep: 12.0pt plus 2.0pt minus 2.0pt;
+% \intextsep: 12.0pt plus 2.0pt minus 2.0pt.
+}
 
 
 %
 % REFERENCES
 %
+
+% \usepackage[sorting=none]{biblatex} % http://www.ctan.org/tex-archive/help/Catalogue/entries/biblatex.html
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +168,7 @@ breakautoindent=true}
 %
 \title{Generating Datasets about Building Designs \\Based on a Multilayer Building Ontology}
 %
-\titlerunning{Building ontology}  % abbreviated title (for running head)
+% \titlerunning{Building ontology}  % abbreviated title (for running head)
 %                                     also used for the TOC unless
 %                                     \toctitle is used
 %
@@ -164,7 +185,7 @@ Espoo, Finland\\
 
 \begin{abstract}
 
-The volume of data produced in the construction industry is rapidly growing but, as of now, it is not available for open and flexible access and utilization. We present an ontology derived from the conceptualization of IFC, the existing standard for representing building designs, and a tool to convert building designs from IFC files to RDF datasets that conform to the ontology. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets using Linked Data principles and tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. It paves the way to a distributed and loosely coupled architecture for building information management, and provides opportunities for innovative applications. 
+The volume of data produced in the construction industry is rapidly growing but, as of now, it is not available for open, flexible access and utilization. We propose a new approach to the automatic derivation of a building ontology from the conceptualization of Industry Foundation Classes (IFC), the existing standard for representing building designs. The resulted multilayer ontology and the tool for converting building designs from IFC files to RDF datasets that conform to the ontology are introduced. Replacing the traditional point-to-point exchange of IFC files with publication of RDF datasets using Linked Data tools enables information integration across different IFC-based and other smart city datasets, and the granular access to individual components. It paves the way to a distributed, loosely coupled architecture for building information management, and provides opportunities for innovative applications. 
 
 \keywords{Ontology, Linked Data, OWL, RDF, IFC, BIM}
 
@@ -175,9 +196,9 @@ The volume of data produced in the construction industry is rapidly growing but,
 
 \input{article-02-main.tex}
 
-\section*{Acknowledgements}
+% According to LNCS manual, the Acknowledgements section must be declared by using \subsubsection{}
 
-This work has been carried out at Aalto University in research projects DRUM (RYM/PRE 2010-2014) and DRUMBEAT (2014-2017), funded by Tekes, Aalto University, and the participating companies. 
+\subsubsection{Acknowledgements.} This work has been carried out at Aalto University in research projects DRUM (RYM/PRE 2010-2014) and DRUMBEAT (2014-2017), funded by Tekes, Aalto University, and the participating companies. 
 
 %\input{article-03-bibliography.tex}
 
