@@ -8,9 +8,9 @@ spaces, indoor locations, indoor routes, assets, people, sensors, materials, equ
 to surrounding networks (traffic, infrastructure, communication), detected issues, and 
 activities in the building.
 
-Currently, huge amounts of building designs information is produced by 
-using Building Information Modeling (BIM) tools \cite{eastman2011bim}. 
-IFC \cite{ISO16739,liebich2010unveiling} -- a widely adopted standard -- provides a common representation for BIM models of 
+Currently, huge amounts of building designs information is produced
+using Building Information Modeling (BIM) tools \cite{eastman2011bim}. Industry Foundation Classes 
+(IFC) \cite{ISO16739,liebich2010unveiling} -- a widely adopted standard -- provides a common representation for BIM models of 
 different design disciplines. All major BIM tools support IFC and can export BIM models to IFC files for exchange with other parties.
 
 BIM models could provide a natural framework to organize and manage building related information. However, a big obstacle is the difficulty to access and utilize BIM models which have traditionally been shared through point-to-point file exchange. They cannot be used in an online, granular, and 
@@ -44,11 +44,12 @@ information is required, as no validation or checking of \ifcrdf{} data is neede
 tools. In addition, a full conversion of the IFC schema produces a huge ontology, difficult to understand or manipulate.
 
 Consequently, we convert the IFC schema into a \emph{flexible, multilayer \ifcowl{} ontology}
-in a way that \emph{\ifcrdf{} is compatible with any of the layers} (Fig. \ref{fig:ifcOWL-layers}). 
-New representational constructs are introduced at more comprehensive levels which, therefore, 
-provide increasing detailed type information about \ifcrdf{} data (Table \ref{tab:ifcOWL-layers}).
+in a way that \emph{\ifcrdf{} is compatible with any of the layers} (Fig. \ref{fig:ifcOWL-layers}), and in which 
+%New representational constructs are included at 
+the more comprehensive levels % which, therefore, 
+provide increasing detailed type information about the same \ifcrdf{} data (Table \ref{tab:ifcOWL-layers}).
 
-\begin{table}
+\begin{table}[b]
     \caption{Contents of ifcOWL layers}
     \label{tab:ifcOWL-layers}
     \centering
@@ -87,6 +88,9 @@ Our approach differs from the previous IFC-to-OWL/RDF conversions
 is based on OWL 2 profiles, produces a flexible multilayer ontology, applies other methods of data\-type definitions and is specifically targeted to
 real-life Linked Data applications. It uses stable URIs for entities, in contrast to the previous approaches
 where the URIs were unstable across models versions.
+
+It should be noted that surface models targeted to building users can be shared in CityGML \cite{kolbe2005citygml}. IFC, however, provides complementary, original information about building design for a wider range of stakeholders and use cases.
+%, and can also be one source when generating CityGML models. 
 
 % CityGML \cite{kolbe2005citygml}, a surface model for buildings, can be useful to visitors for 
 % indoor navigation. IFC contains complementary information about building design, structure, 
